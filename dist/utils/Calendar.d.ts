@@ -1,6 +1,6 @@
 import { calendar_v3 } from 'googleapis';
 import Schema$Event = calendar_v3.Schema$Event;
-export interface calendarConfigProps {
+export interface CalendarConfigProps {
     GOOGLE_CLIENT_EMAIL: string;
     GOOGLE_PRIVATE_KEY: string;
     GOOGLE_CALENDAR_ID: string;
@@ -9,11 +9,11 @@ export interface calendarConfigProps {
 /**
  * Get all the events from the Google calendar
  */
-export declare function getCalendarEvents(calendarConfig: calendarConfigProps, timeMin: string, timeMax: string): Promise<calendar_v3.Schema$Event[] | undefined>;
+export declare function getCalendarEvents(calendarConfig: CalendarConfigProps, timeMin: string, timeMax: string): Promise<calendar_v3.Schema$Event[] | undefined>;
 /**
  * Create calendar appointment
  */
-export declare function makeCalendarEvent(calendarConfig: calendarConfigProps, date: string, timeRange: string, displayName: string, phoneNumber: string): Promise<string>;
+export declare function makeCalendarEvent(calendarConfig: CalendarConfigProps, date: string, timeRange: string, displayName: string, phoneNumber: string): Promise<string>;
 /**
  * Sort the events into Slots and Appointments
  */

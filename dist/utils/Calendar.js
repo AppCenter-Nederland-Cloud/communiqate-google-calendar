@@ -61,7 +61,7 @@ function getCalendarEvents(calendarConfig, timeMin, timeMax) {
                             calendarId: GOOGLE_CALENDAR_ID,
                             timeMin: timeMin,
                             timeMax: timeMax,
-                            maxResults: 2500,
+                            maxResults: 500,
                             timeZone: "UTC",
                             singleEvents: true,
                             orderBy: "startTime",
