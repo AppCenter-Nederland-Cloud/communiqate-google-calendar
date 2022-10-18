@@ -95,7 +95,7 @@ export async function sendAppointmentMessage(conversationId: string, apiKey: str
                     text: "Afspraak planner",
                 },
                 body: {
-                    text: "Dit zijn de tijden die beschikbaar zijn voor deze dag, wil je toch een andere dag kiezen? Kies dan voor Andere dag kiezen.",
+                    text: "Dit zijn de tijden die beschikbaar zijn voor deze dag, wil je toch een andere dag kiezen? Kies dan voor andere dag kiezen.",
                 },
                 action: {
                     sections: [

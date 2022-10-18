@@ -8,7 +8,7 @@ const isoWeek = require('dayjs/plugin/isoWeek');
 dayjs.extend(isoWeek);
 
 
-export interface calendarConfigProps {
+export interface CalendarConfigProps {
     GOOGLE_CLIENT_EMAIL: string;
     GOOGLE_PRIVATE_KEY: string;
     GOOGLE_CALENDAR_ID: string;
@@ -18,7 +18,7 @@ export interface calendarConfigProps {
 /**
  * Get all the events from the Google calendar
  */
-export async function getCalendarEvents(calendarConfig: calendarConfigProps, timeMin: string, timeMax: string) {
+export async function getCalendarEvents(calendarConfig: CalendarConfigProps, timeMin: string, timeMax: string) {
     const {
         GOOGLE_CLIENT_EMAIL,
         GOOGLE_PRIVATE_KEY,
@@ -43,7 +43,7 @@ export async function getCalendarEvents(calendarConfig: calendarConfigProps, tim
         calendarId: GOOGLE_CALENDAR_ID,
         timeMin: timeMin,
         timeMax: timeMax,
-        maxResults: 2500,
+        maxResults: 500,
         timeZone: "UTC",
         singleEvents: true,
         orderBy: "startTime",
@@ -55,7 +55,7 @@ export async function getCalendarEvents(calendarConfig: calendarConfigProps, tim
 /**
  * Create calendar appointment
  */
-export async function makeCalendarEvent(calendarConfig: calendarConfigProps, date: string, timeRange: string, displayName: string, phoneNumber: string) {
+export async function makeCalendarEvent(calendarConfig: CalendarConfigProps, date: string, timeRange: string, displayName: string, phoneNumber: string) {
     const {
         GOOGLE_CLIENT_EMAIL,
         GOOGLE_PRIVATE_KEY,
