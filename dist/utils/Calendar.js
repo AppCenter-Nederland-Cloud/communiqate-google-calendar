@@ -61,14 +61,14 @@ function getCalendarEvents(calendarConfig, timeMin, timeMax) {
                             calendarId: GOOGLE_CALENDAR_ID,
                             timeMin: timeMin,
                             timeMax: timeMax,
-                            maxResults: 500,
+                            maxResults: 50,
                             timeZone: "UTC",
                             singleEvents: true,
                             orderBy: "startTime",
                         })];
                 case 1:
                     data = (_a.sent()).data;
-                    return [2 /*return*/, data.items];
+                    return [2 /*return*/, data];
             }
         });
     });

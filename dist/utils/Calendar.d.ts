@@ -9,7 +9,7 @@ export interface CalendarConfigProps {
 /**
  * Get all the events from the Google calendar
  */
-export declare function getCalendarEvents(calendarConfig: CalendarConfigProps, timeMin: string, timeMax: string): Promise<calendar_v3.Schema$Event[] | undefined>;
+export declare function getCalendarEvents(calendarConfig: CalendarConfigProps, timeMin: string, timeMax: string): Promise<calendar_v3.Schema$Events>;
 /**
  * Create calendar appointment
  */

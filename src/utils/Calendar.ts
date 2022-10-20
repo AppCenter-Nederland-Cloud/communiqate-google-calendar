@@ -43,13 +43,13 @@ export async function getCalendarEvents(calendarConfig: CalendarConfigProps, tim
         calendarId: GOOGLE_CALENDAR_ID,
         timeMin: timeMin,
         timeMax: timeMax,
-        maxResults: 500,
+        maxResults: 2500,
         timeZone: "UTC",
         singleEvents: true,
         orderBy: "startTime",
     });
 
-    return data.items;
+    return data;
 }
 
 /**
