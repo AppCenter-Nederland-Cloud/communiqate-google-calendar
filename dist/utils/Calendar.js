@@ -54,17 +54,17 @@ function getCalendarEvents(calendarConfig, timeMin, timeMax) {
                     GOOGLE_CLIENT_EMAIL = calendarConfig.GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY = calendarConfig.GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID = calendarConfig.GOOGLE_CALENDAR_ID, SCOPES = calendarConfig.SCOPES;
                     jwtClient = new googleapis_1.google.auth.JWT(GOOGLE_CLIENT_EMAIL, undefined, GOOGLE_PRIVATE_KEY, SCOPES);
                     calendar = googleapis_1.google.calendar({
-                        version: "v3",
+                        version: 'v3',
                         auth: jwtClient,
                     });
                     return [4 /*yield*/, calendar.events.list({
                             calendarId: GOOGLE_CALENDAR_ID,
                             timeMin: timeMin,
                             timeMax: timeMax,
-                            maxResults: 50,
-                            timeZone: "UTC",
+                            maxResults: 2500,
+                            timeZone: 'UTC',
                             singleEvents: true,
-                            orderBy: "startTime",
+                            orderBy: 'startTime',
                         })];
                 case 1:
                     data = (_a.sent()).data;
@@ -84,18 +84,18 @@ function makeCalendarEvent(calendarConfig, date, timeRange, displayName, phoneNu
             GOOGLE_CLIENT_EMAIL = calendarConfig.GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY = calendarConfig.GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID = calendarConfig.GOOGLE_CALENDAR_ID, SCOPES = calendarConfig.SCOPES;
             jwtClient = new googleapis_1.google.auth.JWT(GOOGLE_CLIENT_EMAIL, undefined, GOOGLE_PRIVATE_KEY, SCOPES);
             calendar = googleapis_1.google.calendar({
-                version: "v3",
+                version: 'v3',
                 auth: jwtClient,
             });
-            day = parseInt(date.split("/")[0]);
-            month = parseInt(date.split("/")[1]);
-            year = parseInt(date.split("/")[2]);
-            startTime = timeRange.split("-")[0];
-            endTime = timeRange.split("-")[1];
-            startTimeHour = parseInt(startTime.split(":")[0]);
-            startTimeMinute = parseInt(startTime.split(":")[1]);
-            endTimeHour = parseInt(endTime.split(":")[0]);
-            endTimeMinute = parseInt(endTime.split(":")[1]);
+            day = parseInt(date.split('/')[0]);
+            month = parseInt(date.split('/')[1]);
+            year = parseInt(date.split('/')[2]);
+            startTime = timeRange.split('-')[0];
+            endTime = timeRange.split('-')[1];
+            startTimeHour = parseInt(startTime.split(':')[0]);
+            startTimeMinute = parseInt(startTime.split(':')[1]);
+            endTimeHour = parseInt(endTime.split(':')[0]);
+            endTimeMinute = parseInt(endTime.split(':')[1]);
             initialDate = new Date("".concat(month, "/").concat(day, "/").concat(year));
             startDateTime = new Date(initialDate.setHours(startTimeHour, startTimeMinute));
             endDateTime = new Date(initialDate.setHours(endTimeHour, endTimeMinute));
@@ -103,19 +103,19 @@ function makeCalendarEvent(calendarConfig, date, timeRange, displayName, phoneNu
                 summary: "Afspraak met ".concat(displayName),
                 start: {
                     //dateTime: dayjs(startDateTime).utc().tz("Europe/Amsterdam").format()
-                    dateTime: dayjs(startDateTime).add(-2, "hour").format(),
+                    dateTime: dayjs(startDateTime).add(-2, 'hour').format(),
                 },
                 end: {
                     //dateTime: dayjs(endDateTime).utc().tz("Europe/Amsterdam").format()
-                    dateTime: dayjs(endDateTime).add(-2, "hour").format(),
+                    dateTime: dayjs(endDateTime).add(-2, 'hour').format(),
                 },
                 description: "Afspraak gemaakt door ".concat(displayName, " met telefoonnummer ").concat(phoneNumber),
             };
             calendar.events.insert({
-                'calendarId': GOOGLE_CALENDAR_ID,
-                'requestBody': event
+                calendarId: GOOGLE_CALENDAR_ID,
+                requestBody: event,
             });
-            return [2 /*return*/, (0, Functions_1.getAppointmentString)(startDateTime.toISOString(), endDateTime.toISOString(), "nl-NL")];
+            return [2 /*return*/, (0, Functions_1.getAppointmentString)(startDateTime.toISOString(), endDateTime.toISOString(), 'nl-NL')];
         });
     });
 }
@@ -127,7 +127,7 @@ function sortEvents(events) {
     var timeSlots = [];
     var appointments = [];
     events.forEach(function (event) {
-        if (event.summary.toLowerCase() === "Beschikbaar".toLowerCase()) {
+        if (event.summary.toLowerCase() === 'Beschikbaar'.toLowerCase()) {
             timeSlots.push({
                 summary: event.summary,
                 start: event.start.dateTime,
@@ -152,16 +152,13 @@ exports.sortEvents = sortEvents;
  * Returns the appointments for today (not available)
  */
 function getAppointmentsForTimeSlot(appointments, timeSlot) {
-    return appointments.filter(function (appointment) {
-        return dayjs(appointment.end).format("DD/MM/YYYY") ===
-            dayjs(timeSlot.start).format("DD/MM/YYYY");
-    });
+    return appointments.filter(function (appointment) { return dayjs(appointment.end).format('DD/MM/YYYY') === dayjs(timeSlot.start).format('DD/MM/YYYY'); });
 }
 /**
  * Get the minutes between 2 date strings
  */
 function getMinutesBetween(first, second) {
-    return dayjs(second).diff(first, "minute");
+    return dayjs(second).diff(first, 'minute');
 }
 /**
  * Get the available time for that day
@@ -189,9 +186,7 @@ function getAvailableTimeToday(appointmentsToday, timeSlot, timeBetweenAppointme
                 var minutes = getMinutesBetween(selectedAppointment.end, nextSelected.start);
                 if (minutes > 0) {
                     availableTimeToday.push({
-                        startTime: dayjs(selectedAppointment.end)
-                            .add(timeBetweenAppointments, "minute")
-                            .format(),
+                        startTime: dayjs(selectedAppointment.end).add(timeBetweenAppointments, 'minute').format(),
                         minutesBetween: minutes - timeBetweenAppointments,
                         endTime: dayjs(nextSelected.start).format(),
                     });
@@ -226,7 +221,7 @@ function getAvailableSlotsToday(availableTimeToday, appointmentDuration, timeBet
     var availableSlotsToday = [];
     availableTimeToday.forEach(function (availableTime) {
         var newAppointmentStartTime = dayjs(availableTime.startTime);
-        var newAppointmentEndTime = dayjs(availableTime.startTime).add(appointmentDuration, "minute");
+        var newAppointmentEndTime = dayjs(availableTime.startTime).add(appointmentDuration, 'minute');
         while (newAppointmentStartTime.isBefore(availableTime.endTime)) {
             if (newAppointmentEndTime.isBefore(availableTime.endTime)) {
                 availableSlotsToday.push({
@@ -234,8 +229,8 @@ function getAvailableSlotsToday(availableTimeToday, appointmentDuration, timeBet
                     endTime: newAppointmentEndTime.format(),
                 });
             }
-            newAppointmentStartTime = dayjs(newAppointmentStartTime).add(appointmentDuration + timeBetweenAppointments, "minute");
-            newAppointmentEndTime = dayjs(newAppointmentEndTime).add(appointmentDuration + timeBetweenAppointments, "minute");
+            newAppointmentStartTime = dayjs(newAppointmentStartTime).add(appointmentDuration + timeBetweenAppointments, 'minute');
+            newAppointmentEndTime = dayjs(newAppointmentEndTime).add(appointmentDuration + timeBetweenAppointments, 'minute');
         }
     });
     return availableSlotsToday;
@@ -252,7 +247,7 @@ function getAvailableSlotsTotal(timeSlots, appointments, timeBetweenAppointments
         availableSlotsToday.forEach(function (slot) {
             if (dayjs(slot.startTime).isAfter(dayjs())) {
                 allSlots.push({
-                    fullString: (0, Functions_1.getAppointmentString)(slot.startTime, slot.endTime, "nl-NL"),
+                    fullString: (0, Functions_1.getAppointmentString)(slot.startTime, slot.endTime, 'nl-NL'),
                     startDate: slot.startTime,
                     endDate: slot.endTime,
                 });
@@ -272,8 +267,8 @@ function getAvailableWeeks(allSlots) {
         var weekNum = date.isoWeek();
         weeks[weekNum] = {
             title: "week ".concat(weekNum),
-            startDate: date.startOf("isoWeek").format(),
-            description: "".concat((0, Functions_1.getDateString)(date.startOf("isoWeek").format()), " tot ").concat((0, Functions_1.getDateString)(date.endOf("isoWeek").format())),
+            startDate: date.startOf('isoWeek').format(),
+            description: "".concat((0, Functions_1.getDateString)(date.startOf('isoWeek').format()), " tot ").concat((0, Functions_1.getDateString)(date.endOf('isoWeek').format())),
             number: weekNum,
         };
     });
@@ -286,7 +281,7 @@ exports.getAvailableWeeks = getAvailableWeeks;
 function getDaysByWeek(allSlots, weekNumber) {
     var days = [];
     allSlots.forEach(function (slot) {
-        var day = (0, Functions_1.dateString)(slot.startDate, "nl-NL", 'Europe/Amsterdam', { dateStyle: "full" });
+        var day = (0, Functions_1.dateString)(slot.startDate, 'nl-NL', 'Europe/Amsterdam', { dateStyle: 'full' });
         var weekNum = dayjs(slot.startDate).isoWeek();
         if (weekNum === weekNumber) {
             if (days.find(function (d) { return d.parsedDate === day; })) {
@@ -294,7 +289,7 @@ function getDaysByWeek(allSlots, weekNumber) {
             else {
                 days.push({
                     parsedDate: day,
-                    actualDate: dayjs(slot.startDate).format("DD/MM/YYYY"),
+                    actualDate: dayjs(slot.startDate).format('DD/MM/YYYY'),
                 });
             }
         }
@@ -308,7 +303,7 @@ exports.getDaysByWeek = getDaysByWeek;
 function getAppointmentsByDay(allSlots, date) {
     var days = [];
     allSlots.forEach(function (slot) {
-        var day = dayjs(slot.startDate).format("DD/MM/YYYY");
+        var day = dayjs(slot.startDate).format('DD/MM/YYYY');
         if (day === date) {
             if (days.length < 9) {
                 days.push(slot);

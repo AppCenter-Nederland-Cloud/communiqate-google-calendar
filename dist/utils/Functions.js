@@ -26,24 +26,24 @@ exports.dateString = dateString;
  * Gets the date string as example: "10 oktober 2022
  */
 function getDateString(date, locale, timeZone) {
-    if (locale === void 0) { locale = "nl-NL"; }
-    if (timeZone === void 0) { timeZone = "Europe/Amsterdam"; }
-    return dateString(date, locale, timeZone, { dateStyle: "long" });
+    if (locale === void 0) { locale = 'nl-NL'; }
+    if (timeZone === void 0) { timeZone = 'Europe/Amsterdam'; }
+    return dateString(date, locale, timeZone, { dateStyle: 'long' });
 }
 exports.getDateString = getDateString;
 /**
  * gets the appointment string as "woensdag 18 januari 2023 tussen 16:00 en 16:30"
  */
 function getAppointmentString(start, end, locale) {
-    if (locale === void 0) { locale = "nl-NL"; }
-    var date = dateString(start, locale, "Europe/Amsterdam", {
-        dateStyle: "full",
+    if (locale === void 0) { locale = 'nl-NL'; }
+    var date = dateString(start, locale, 'Europe/Amsterdam', {
+        dateStyle: 'full',
     });
-    var startTime = dateString(start, locale, "Europe/Amsterdam", {
-        timeStyle: "short",
+    var startTime = dateString(start, locale, 'Europe/Amsterdam', {
+        timeStyle: 'short',
     });
-    var endTime = dateString(end, locale, "Europe/Amsterdam", {
-        timeStyle: "short",
+    var endTime = dateString(end, locale, 'Europe/Amsterdam', {
+        timeStyle: 'short',
     });
     return "".concat(date, " tussen ").concat(startTime, " en ").concat(endTime);
 }
@@ -52,8 +52,8 @@ exports.getAppointmentString = getAppointmentString;
  * Gets a time range from 2 date strings
  */
 function getTimeRange(startDate, endDate) {
-    var startTime = dateString(startDate, "nl-NL", 'Europe/Amsterdam', { timeStyle: "short" });
-    var endTime = dateString(endDate, "nl-NL", 'Europe/Amsterdam', { timeStyle: "short" });
+    var startTime = dateString(startDate, 'nl-NL', 'Europe/Amsterdam', { timeStyle: 'short' });
+    var endTime = dateString(endDate, 'nl-NL', 'Europe/Amsterdam', { timeStyle: 'short' });
     return "".concat(startTime, " - ").concat(endTime);
 }
 exports.getTimeRange = getTimeRange;

@@ -60,21 +60,21 @@ function sendDaysMessage(conversationId, apiKey, days, weekNumber) {
                         });
                     });
                     rows.push({
-                        id: "anders",
-                        title: "Andere week kiezen",
-                        description: "Kies voor deze optie als u voor een andere week een afspraak wilt maken.",
+                        id: 'anders',
+                        title: 'Andere week kiezen',
+                        description: 'Kies voor deze optie als u voor een andere week een afspraak wilt maken.',
                     });
-                    return [4 /*yield*/, MessageBirdMessages.post("/messages", {
-                            type: "interactive",
+                    return [4 /*yield*/, MessageBirdMessages.post('/messages', {
+                            type: 'interactive',
                             content: {
                                 interactive: {
-                                    type: "list",
+                                    type: 'list',
                                     header: {
-                                        type: "text",
-                                        text: "Afspraak planner",
+                                        type: 'text',
+                                        text: 'Afspraak planner',
                                     },
                                     body: {
-                                        text: "Dit zijn de dagen die beschikbaar zijn voor deze week, wil je toch een andere week kiezen? Kies dan voor Andere week kiezen.",
+                                        text: 'Dit zijn de dagen die beschikbaar zijn voor deze week, wil je toch een andere week kiezen? Kies dan voor Andere week kiezen.',
                                     },
                                     action: {
                                         sections: [
@@ -83,7 +83,7 @@ function sendDaysMessage(conversationId, apiKey, days, weekNumber) {
                                                 rows: rows,
                                             },
                                         ],
-                                        button: "Datum kiezen",
+                                        button: 'Datum kiezen',
                                     },
                                 },
                             },
@@ -110,9 +110,9 @@ function sendAppointmentMessage(conversationId, apiKey, appointments, date) {
                         },
                     });
                     appointments.forEach(function (app) {
-                        var title = "".concat((0, Functions_1.dateString)(app.startDate, "nl-NL", 'Europe/Amsterdam', {
-                            timeStyle: "short",
-                        }), " - ").concat((0, Functions_1.dateString)(app.endDate, "nl-NL", 'Europe/Amsterdam', { timeStyle: "short" }));
+                        var title = "".concat((0, Functions_1.dateString)(app.startDate, 'nl-NL', 'Europe/Amsterdam', {
+                            timeStyle: 'short',
+                        }), " - ").concat((0, Functions_1.dateString)(app.endDate, 'nl-NL', 'Europe/Amsterdam', { timeStyle: 'short' }));
                         rows.push({
                             id: app.startDate,
                             title: title,
@@ -120,21 +120,21 @@ function sendAppointmentMessage(conversationId, apiKey, appointments, date) {
                         });
                     });
                     rows.push({
-                        id: "anders",
-                        title: "Andere dag kiezen",
-                        description: "Kies voor deze optie als u voor een andere dag een afspraak wilt maken.",
+                        id: 'anders',
+                        title: 'Andere dag kiezen',
+                        description: 'Kies voor deze optie als u voor een andere dag een afspraak wilt maken.',
                     });
-                    return [4 /*yield*/, MessageBirdMessages.post("/messages", {
-                            type: "interactive",
+                    return [4 /*yield*/, MessageBirdMessages.post('/messages', {
+                            type: 'interactive',
                             content: {
                                 interactive: {
-                                    type: "list",
+                                    type: 'list',
                                     header: {
-                                        type: "text",
-                                        text: "Afspraak planner",
+                                        type: 'text',
+                                        text: 'Afspraak planner',
                                     },
                                     body: {
-                                        text: "Dit zijn de tijden die beschikbaar zijn voor deze dag, wil je toch een andere dag kiezen? Kies dan voor andere dag kiezen.",
+                                        text: 'Dit zijn de tijden die beschikbaar zijn voor deze dag, wil je toch een andere dag kiezen? Kies dan voor andere dag kiezen.',
                                     },
                                     action: {
                                         sections: [
@@ -143,7 +143,7 @@ function sendAppointmentMessage(conversationId, apiKey, appointments, date) {
                                                 rows: rows,
                                             },
                                         ],
-                                        button: "Tijdstip kiezen",
+                                        button: 'Tijdstip kiezen',
                                     },
                                 },
                             },
