@@ -36,40 +36,142 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAppointmentsByDay = exports.getDaysByWeek = exports.getAvailableWeeks = exports.getAvailableSlotsTotal = exports.sortEvents = exports.makeCalendarEvent = exports.getCalendarEvents = void 0;
+exports.getAppointmentsByDay = exports.getDaysByWeek = exports.getAvailableWeeks = exports.getAvailableSlotsTotal = exports.sortEvents = exports.makeCalendarEvent = exports.getCalendarEvents = exports.checkWeekAvailable = exports.checkDayAvailable = void 0;
 var googleapis_1 = require("googleapis");
 var Functions_1 = require("./Functions");
+var api_1 = require("../api");
 var dayjs = require('dayjs');
 var isoWeek = require('dayjs/plugin/isoWeek');
 dayjs.extend(isoWeek);
+/**
+ * Get the minutes between 2 date strings
+ */
+function getMinutesBetween(first, second) {
+    return dayjs(second).diff(first, 'minute');
+}
+/**
+ * Check if that day is available
+ * @param day
+ * @param timeBetweenAppointments
+ * @param appointmentDuration
+ */
+function checkDayAvailable(day, timeBetweenAppointments, appointmentDuration) {
+    if (day.appointments.length > 0) {
+        // for each appointment
+        for (var i = 0; i < day.appointments.length; i++) {
+            //get the appointment
+            var appointment = day.appointments[i];
+            if (i === 0) {
+                //this is the first appointment
+                //get the time between the start of the day and the start of the appointment
+                var first = dayjs(day.start).add(timeBetweenAppointments, 'minute');
+                var second = dayjs(appointment.start).add(-timeBetweenAppointments, 'minute');
+                var minutesBetween = getMinutesBetween(first, second);
+                //if that is greater than appointmentDuration return true else continue
+                if (minutesBetween > appointmentDuration) {
+                    return true;
+                }
+            }
+            // check if there is a next appointment
+            if (day.appointments.length > i + 1) {
+                //there is a next appointment
+                var nextAppointment = day.appointments[i + 1];
+                //get the minutes between the end of the first appointment and the start of the next appointment
+                var first = dayjs(appointment.end).add(timeBetweenAppointments, 'minute');
+                var second = dayjs(nextAppointment.start).add(-timeBetweenAppointments, 'minute');
+                var minutesBetween = getMinutesBetween(first, second);
+                //if that is greater than appointmentDuration return true else continue
+                if (minutesBetween > appointmentDuration) {
+                    return true;
+                }
+                //if that is greater than appointmentDuration return true else continue
+            }
+            else {
+                //get the minutes between the end of the appointment and the end of the day
+                var first = dayjs(appointment.end).add(timeBetweenAppointments, 'minute');
+                var second = dayjs(day.end).add(-timeBetweenAppointments, 'minute');
+                var minutesBetween = getMinutesBetween(first, second);
+                //if that is greater than appointmentDuration return true else continue
+                if (minutesBetween > appointmentDuration) {
+                    return true;
+                }
+            }
+        }
+    }
+    else {
+        // there are no appointments so the whole day is available
+        return true;
+    }
+    return false;
+}
+exports.checkDayAvailable = checkDayAvailable;
+/**
+ * Check if the week is available
+ * @param weekData
+ * @param timeBetweenAppointments
+ * @param appointmentDuration
+ */
+function checkWeekAvailable(weekData, timeBetweenAppointments, appointmentDuration) {
+    var availableBool = false;
+    weekData.forEach(function (day) {
+        //foreach day in the week, check if that day is available, if one of them is true, then week is available. else week is not available
+        var available = checkDayAvailable(day, timeBetweenAppointments, appointmentDuration);
+        if (available) {
+            availableBool = true;
+        }
+    });
+    // else week is not available
+    return availableBool;
+}
+exports.checkWeekAvailable = checkWeekAvailable;
+// export async function GetPaginatedEvents(
+//   calendar: GoogleCalendar,
+//   timeMin: string,
+//   timeMax: string,
+//   passedDownEvents: GoogleCalendarEvent[] | [] = [],
+//   pageToken: string | undefined = undefined,
+// ): Promise<any[]> {
+//   const newEvents: GoogleCalendarEvent[] | [] = passedDownEvents ? passedDownEvents : [];
+//
+//   let nextPageToken = pageToken;
+//
+//   const event = await calendar.getEvents(timeMin, timeMax, 'UTC', {
+//     maxResults: 25,
+//     pageToken: nextPageToken,
+//   });
+//
+//   if (event.data.items) {
+//     event.data.items.forEach((item) => {
+//       newEvents.push({
+//         id: item.id,
+//         title: item.summary,
+//         description: item.description,
+//         start: item.start,
+//         end: item.end,
+//       });
+//     });
+//   }
+//
+//   if (event.data.nextPageToken) {
+//     nextPageToken = event.data.nextPageToken;
+//   }
+//
+//   if (!nextPageToken) {
+//     return newEvents;
+//   }
+//
+//   return await GetPaginatedEvents(calendar, timeMin, timeMax, newEvents, nextPageToken);
+// }
 /**
  * Get all the events from the Google calendar
  */
 function getCalendarEvents(calendarConfig, timeMin, timeMax) {
     return __awaiter(this, void 0, void 0, function () {
-        var GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID, SCOPES, jwtClient, calendar, data;
+        var GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID, SCOPES, calendar;
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    GOOGLE_CLIENT_EMAIL = calendarConfig.GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY = calendarConfig.GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID = calendarConfig.GOOGLE_CALENDAR_ID, SCOPES = calendarConfig.SCOPES;
-                    jwtClient = new googleapis_1.google.auth.JWT(GOOGLE_CLIENT_EMAIL, undefined, GOOGLE_PRIVATE_KEY, SCOPES);
-                    calendar = googleapis_1.google.calendar({
-                        version: 'v3',
-                        auth: jwtClient,
-                    });
-                    return [4 /*yield*/, calendar.events.list({
-                            calendarId: GOOGLE_CALENDAR_ID,
-                            timeMin: timeMin,
-                            timeMax: timeMax,
-                            maxResults: 2500,
-                            timeZone: 'UTC',
-                            singleEvents: true,
-                            orderBy: 'startTime',
-                        })];
-                case 1:
-                    data = (_a.sent()).data;
-                    return [2 /*return*/, data];
-            }
+            GOOGLE_CLIENT_EMAIL = calendarConfig.GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY = calendarConfig.GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID = calendarConfig.GOOGLE_CALENDAR_ID, SCOPES = calendarConfig.SCOPES;
+            calendar = new api_1.GoogleCalendar(GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID);
+            return [2 /*return*/, 0]; //await GetPaginatedEvents(calendar, timeMin, timeMax);
         });
     });
 }
@@ -154,12 +256,44 @@ exports.sortEvents = sortEvents;
 function getAppointmentsForTimeSlot(appointments, timeSlot) {
     return appointments.filter(function (appointment) { return dayjs(appointment.end).format('DD/MM/YYYY') === dayjs(timeSlot.start).format('DD/MM/YYYY'); });
 }
-/**
- * Get the minutes between 2 date strings
- */
-function getMinutesBetween(first, second) {
-    return dayjs(second).diff(first, 'minute');
-}
+// /**
+//  * Sort the appointments to date
+//  */
+// export function sortAvailabilityAndAppointments(items: any[]) {
+//   const newEvents: any = {};
+//
+//   items.forEach((item) => {
+//     const date = dayjs(item.start.dateTime).format('DD/MM/YYYY');
+//
+//     if (newEvents[date]) {
+//       //is appointment
+//       newEvents[date].appointments = [
+//         ...(newEvents[date].appointments ? newEvents[date].appointments : []),
+//         {
+//           id: item.id,
+//           title: item.summary,
+//           description: item.description,
+//           start: item.start.dateTime,
+//           end: item.end.dateTime,
+//         },
+//       ];
+//     } else {
+//       //is timeSlot
+//       newEvents[date] = {
+//         start: item.start.dateTime,
+//         end: item.end.dateTime,
+//         appointments: [],
+//       };
+//     }
+//   });
+//
+//   return newEvents;
+// }
+//
+// /**
+//  * Get the available time for the given day
+//  */
+// function getAvailableTimeDay(today: any[], timeBetweenAppointments: number) {}
 /**
  * Get the available time for that day
  */

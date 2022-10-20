@@ -6,10 +6,33 @@ export interface CalendarConfigProps {
     GOOGLE_CALENDAR_ID: string;
     SCOPES: string;
 }
+export interface TimeSlot {
+    start: string;
+    end: string;
+}
+export interface CalendarDay {
+    start: string;
+    end: string;
+    appointments: TimeSlot[];
+}
+/**
+ * Check if that day is available
+ * @param day
+ * @param timeBetweenAppointments
+ * @param appointmentDuration
+ */
+export declare function checkDayAvailable(day: CalendarDay, timeBetweenAppointments: number, appointmentDuration: number): boolean;
+/**
+ * Check if the week is available
+ * @param weekData
+ * @param timeBetweenAppointments
+ * @param appointmentDuration
+ */
+export declare function checkWeekAvailable(weekData: CalendarDay[], timeBetweenAppointments: number, appointmentDuration: number): boolean;
 /**
  * Get all the events from the Google calendar
  */
-export declare function getCalendarEvents(calendarConfig: CalendarConfigProps, timeMin: string, timeMax: string): Promise<calendar_v3.Schema$Events>;
+export declare function getCalendarEvents(calendarConfig: CalendarConfigProps, timeMin: string, timeMax: string): Promise<number>;
 /**
  * Create calendar appointment
  */
