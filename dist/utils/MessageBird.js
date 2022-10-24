@@ -99,7 +99,7 @@ function sendDaysMessage(config, days, weekNumber) {
                             rows.push({
                                 id: day.start,
                                 title: (0, Functions_1.dateString)(day.start, 'nl-NL', 'Europe/Amsterdam', { dateStyle: 'short' }),
-                                description: (0, Functions_1.getDateString)(day.start),
+                                description: (0, Functions_1.dateString)(day.start, 'nl-NL', 'Europe/Amsterdam', { dateStyle: 'full' }),
                             });
                         }
                     });
@@ -140,27 +140,28 @@ function sendDaysMessage(config, days, weekNumber) {
     });
 }
 exports.sendDaysMessage = sendDaysMessage;
-function sendAppointmentMessage(conversationId, apiKey, appointments, date) {
+function sendAppointmentMessage(config, appointments, dateResponse) {
     return __awaiter(this, void 0, void 0, function () {
-        var rows, MessageBirdMessages;
+        var conversationId, apiKey, rows, MessageBirdMessages;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
+                    conversationId = config.conversationId, apiKey = config.apiKey;
                     rows = [];
                     MessageBirdMessages = axios.create({
-                        baseURL: "https://conversations.messagebird.com/v1/conversations/".concat(conversationId),
+                        baseURL: "".concat(url, "/").concat(conversationId),
                         headers: {
                             Authorization: "AccessKey ".concat(apiKey),
                         },
                     });
-                    appointments.forEach(function (app) {
-                        var title = "".concat((0, Functions_1.dateString)(app.startDate, 'nl-NL', 'Europe/Amsterdam', {
+                    appointments.forEach(function (appointment) {
+                        var title = "".concat((0, Functions_1.dateString)(appointment.start, 'nl-NL', 'Europe/Amsterdam', {
                             timeStyle: 'short',
-                        }), " - ").concat((0, Functions_1.dateString)(app.endDate, 'nl-NL', 'Europe/Amsterdam', { timeStyle: 'short' }));
+                        }), " - ").concat((0, Functions_1.dateString)(appointment.end, 'nl-NL', 'Europe/Amsterdam', { timeStyle: 'short' }));
                         rows.push({
-                            id: app.startDate,
+                            id: appointment.start,
                             title: title,
-                            description: app.fullString,
+                            description: (0, Functions_1.getAppointmentString)(appointment.start, appointment.end),
                         });
                     });
                     rows.push({
@@ -183,7 +184,7 @@ function sendAppointmentMessage(conversationId, apiKey, appointments, date) {
                                     action: {
                                         sections: [
                                             {
-                                                title: "".concat(date),
+                                                title: "".concat(dateResponse),
                                                 rows: rows,
                                             },
                                         ],

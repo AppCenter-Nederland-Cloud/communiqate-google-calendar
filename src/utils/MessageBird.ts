@@ -1,5 +1,5 @@
-import { dateString, getDateString } from './Functions';
-import { CalendarDay } from './Calendar';
+import { dateString, getAppointmentString } from './Functions';
+import { Appointment, CalendarDay } from './Calendar';
 
 const axios = require('axios');
 
@@ -63,7 +63,7 @@ export async function sendDaysMessage(config: MessageBirdConfig, days: CalendarD
       rows.push({
         id: day.start,
         title: dateString(day.start, 'nl-NL', 'Europe/Amsterdam', { dateStyle: 'short' }), //parse,
-        description: getDateString(day.start),
+        description: dateString(day.start, 'nl-NL', 'Europe/Amsterdam', { dateStyle: 'full' }),
       });
     }
   });
@@ -103,29 +103,30 @@ export async function sendDaysMessage(config: MessageBirdConfig, days: CalendarD
 }
 
 export async function sendAppointmentMessage(
-  conversationId: string,
-  apiKey: string,
-  appointments: any[],
-  date: string,
+  config: MessageBirdConfig,
+  appointments: Appointment[],
+  dateResponse: string,
 ) {
+  const { conversationId, apiKey } = config;
+
   const rows = [];
 
   const MessageBirdMessages = axios.create({
-    baseURL: `https://conversations.messagebird.com/v1/conversations/${conversationId}`,
+    baseURL: `${url}/${conversationId}`,
     headers: {
       Authorization: `AccessKey ${apiKey}`,
     },
   });
 
-  appointments.forEach((app) => {
-    const title = `${dateString(app.startDate, 'nl-NL', 'Europe/Amsterdam', {
+  appointments.forEach((appointment) => {
+    const title = `${dateString(appointment.start, 'nl-NL', 'Europe/Amsterdam', {
       timeStyle: 'short',
-    })} - ${dateString(app.endDate, 'nl-NL', 'Europe/Amsterdam', { timeStyle: 'short' })}`;
+    })} - ${dateString(appointment.end, 'nl-NL', 'Europe/Amsterdam', { timeStyle: 'short' })}`;
 
     rows.push({
-      id: app.startDate,
+      id: appointment.start,
       title: title,
-      description: app.fullString,
+      description: getAppointmentString(appointment.start, appointment.end),
     });
   });
 
@@ -150,7 +151,7 @@ export async function sendAppointmentMessage(
         action: {
           sections: [
             {
-              title: `${date}`,
+              title: `${dateResponse}`,
               rows: rows,
             },
           ],
