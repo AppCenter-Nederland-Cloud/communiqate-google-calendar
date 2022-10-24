@@ -1,10 +1,56 @@
-import { dateString } from './Functions';
+import { dateString, getDateString } from './Functions';
+import { CalendarDay } from './Calendar';
 
 const axios = require('axios');
 
-export async function sendDaysMessage(conversationId: string, apiKey: string, days: any[], weekNumber: number) {
+const url = 'https://conversations.messagebird.com/v1/conversations';
+
+interface MessageBirdConfig {
+  conversationId: string;
+  apiKey: string;
+}
+
+export async function sendErrorMessage(config: MessageBirdConfig, errorMessage: string) {
+  const { conversationId, apiKey } = config;
+
   const MessageBirdMessages = axios.create({
-    baseURL: `https://conversations.messagebird.com/v1/conversations/${conversationId}`,
+    baseURL: `${url}/${conversationId}`,
+    headers: {
+      Authorization: `AccessKey ${apiKey}`,
+    },
+  });
+
+  MessageBirdMessages.post('/messages', {
+    type: 'interactive',
+    content: {
+      interactive: {
+        type: 'button',
+        header: {
+          type: 'text',
+          text: 'Er is een fout opgetreden',
+        },
+        body: {
+          text: errorMessage,
+        },
+        action: {
+          buttons: [
+            {
+              id: 'no-unique-id',
+              type: 'reply',
+              title: 'Opnieuw proberen',
+            },
+          ],
+        },
+      },
+    },
+  });
+}
+
+export async function sendDaysMessage(config: MessageBirdConfig, days: CalendarDay[], weekNumber: number) {
+  const { conversationId, apiKey } = config;
+
+  const MessageBirdMessages = axios.create({
+    baseURL: `${url}/${conversationId}`,
     headers: {
       Authorization: `AccessKey ${apiKey}`,
     },
@@ -12,18 +58,20 @@ export async function sendDaysMessage(conversationId: string, apiKey: string, da
 
   const rows: any[] = [];
 
+  console.log('DAYS', days);
+
   days.forEach((day) => {
     rows.push({
-      id: day.actualDate,
-      title: day.actualDate,
-      description: day.parsedDate,
+      id: day.start,
+      title: dateString(day.start, 'nl-NL', 'Europe/Amsterdam', { dateStyle: 'short' }), //parse,
+      description: getDateString(day.start),
     });
   });
 
   rows.push({
     id: 'anders',
     title: 'Andere week kiezen',
-    description: 'Kies voor deze optie als u voor een andere week een afspraak wilt maken.',
+    description: 'U gaat terug naar de vorige stap om voor een andere week te kiezen',
   });
 
   await MessageBirdMessages.post('/messages', {

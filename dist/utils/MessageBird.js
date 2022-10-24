@@ -36,33 +36,76 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendAppointmentMessage = exports.sendDaysMessage = void 0;
+exports.sendAppointmentMessage = exports.sendDaysMessage = exports.sendErrorMessage = void 0;
 var Functions_1 = require("./Functions");
 var axios = require('axios');
-function sendDaysMessage(conversationId, apiKey, days, weekNumber) {
+var url = 'https://conversations.messagebird.com/v1/conversations';
+function sendErrorMessage(config, errorMessage) {
     return __awaiter(this, void 0, void 0, function () {
-        var MessageBirdMessages, rows;
+        var conversationId, apiKey, MessageBirdMessages;
+        return __generator(this, function (_a) {
+            conversationId = config.conversationId, apiKey = config.apiKey;
+            MessageBirdMessages = axios.create({
+                baseURL: "".concat(url, "/").concat(conversationId),
+                headers: {
+                    Authorization: "AccessKey ".concat(apiKey),
+                },
+            });
+            MessageBirdMessages.post('/messages', {
+                type: 'interactive',
+                content: {
+                    interactive: {
+                        type: 'button',
+                        header: {
+                            type: 'text',
+                            text: 'Er is een fout opgetreden',
+                        },
+                        body: {
+                            text: errorMessage,
+                        },
+                        action: {
+                            buttons: [
+                                {
+                                    id: 'no-unique-id',
+                                    type: 'reply',
+                                    title: 'Opnieuw proberen',
+                                },
+                            ],
+                        },
+                    },
+                },
+            });
+            return [2 /*return*/];
+        });
+    });
+}
+exports.sendErrorMessage = sendErrorMessage;
+function sendDaysMessage(config, days, weekNumber) {
+    return __awaiter(this, void 0, void 0, function () {
+        var conversationId, apiKey, MessageBirdMessages, rows;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
+                    conversationId = config.conversationId, apiKey = config.apiKey;
                     MessageBirdMessages = axios.create({
-                        baseURL: "https://conversations.messagebird.com/v1/conversations/".concat(conversationId),
+                        baseURL: "".concat(url, "/").concat(conversationId),
                         headers: {
                             Authorization: "AccessKey ".concat(apiKey),
                         },
                     });
                     rows = [];
+                    console.log('DAYS', days);
                     days.forEach(function (day) {
                         rows.push({
-                            id: day.actualDate,
-                            title: day.actualDate,
-                            description: day.parsedDate,
+                            id: day.start,
+                            title: (0, Functions_1.dateString)(day.start, 'nl-NL', 'Europe/Amsterdam', { dateStyle: 'short' }),
+                            description: (0, Functions_1.getDateString)(day.start),
                         });
                     });
                     rows.push({
                         id: 'anders',
                         title: 'Andere week kiezen',
-                        description: 'Kies voor deze optie als u voor een andere week een afspraak wilt maken.',
+                        description: 'U gaat terug naar de vorige stap om voor een andere week te kiezen',
                     });
                     return [4 /*yield*/, MessageBirdMessages.post('/messages', {
                             type: 'interactive',
