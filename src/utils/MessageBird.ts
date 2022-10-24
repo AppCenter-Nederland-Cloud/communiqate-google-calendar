@@ -58,14 +58,14 @@ export async function sendDaysMessage(config: MessageBirdConfig, days: CalendarD
 
   const rows: any[] = [];
 
-  console.log('DAYS', days);
-
   days.forEach((day) => {
-    rows.push({
-      id: day.start,
-      title: dateString(day.start, 'nl-NL', 'Europe/Amsterdam', { dateStyle: 'short' }), //parse,
-      description: getDateString(day.start),
-    });
+    if (day.slots) {
+      rows.push({
+        id: day.start,
+        title: dateString(day.start, 'nl-NL', 'Europe/Amsterdam', { dateStyle: 'short' }), //parse,
+        description: getDateString(day.start),
+      });
+    }
   });
 
   rows.push({

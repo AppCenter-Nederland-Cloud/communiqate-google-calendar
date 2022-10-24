@@ -94,13 +94,14 @@ function sendDaysMessage(config, days, weekNumber) {
                         },
                     });
                     rows = [];
-                    console.log('DAYS', days);
                     days.forEach(function (day) {
-                        rows.push({
-                            id: day.start,
-                            title: (0, Functions_1.dateString)(day.start, 'nl-NL', 'Europe/Amsterdam', { dateStyle: 'short' }),
-                            description: (0, Functions_1.getDateString)(day.start),
-                        });
+                        if (day.slots) {
+                            rows.push({
+                                id: day.start,
+                                title: (0, Functions_1.dateString)(day.start, 'nl-NL', 'Europe/Amsterdam', { dateStyle: 'short' }),
+                                description: (0, Functions_1.getDateString)(day.start),
+                            });
+                        }
                     });
                     rows.push({
                         id: 'anders',
