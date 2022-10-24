@@ -59,7 +59,7 @@ export async function sendDaysMessage(config: MessageBirdConfig, days: CalendarD
   const rows: any[] = [];
 
   days.forEach((day) => {
-    if (day.slots) {
+    if (day.slots.length > 0) {
       rows.push({
         id: day.start,
         title: dateString(day.start, 'nl-NL', 'Europe/Amsterdam', { dateStyle: 'short' }), //parse,

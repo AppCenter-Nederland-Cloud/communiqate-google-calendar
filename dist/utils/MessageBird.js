@@ -95,7 +95,7 @@ function sendDaysMessage(config, days, weekNumber) {
                     });
                     rows = [];
                     days.forEach(function (day) {
-                        if (day.slots) {
+                        if (day.slots.length > 0) {
                             rows.push({
                                 id: day.start,
                                 title: (0, Functions_1.dateString)(day.start, 'nl-NL', 'Europe/Amsterdam', { dateStyle: 'short' }),
