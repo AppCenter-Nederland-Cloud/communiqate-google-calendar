@@ -1,62 +1,57 @@
 import { calendar_v3 } from 'googleapis';
-import Schema$Event = calendar_v3.Schema$Event;
+import Schema$EventDateTime = calendar_v3.Schema$EventDateTime;
 export interface CalendarConfigProps {
     GOOGLE_CLIENT_EMAIL: string;
     GOOGLE_PRIVATE_KEY: string;
     GOOGLE_CALENDAR_ID: string;
-    SCOPES: string;
 }
-export interface TimeSlot {
+export interface GoogleCalendarEvent {
+    id: string | null | undefined;
+    title: string | null | undefined;
+    description: string | null | undefined;
+    start: Schema$EventDateTime | undefined;
+    end: Schema$EventDateTime | undefined;
+}
+export interface Appointment {
     start: string;
     end: string;
 }
 export interface CalendarDay {
     start: string;
     end: string;
-    appointments: TimeSlot[];
+    slots: Appointment[];
 }
-/**
- * Check if that day is available
- * @param day
- * @param timeBetweenAppointments
- * @param appointmentDuration
- */
-export declare function checkDayAvailable(day: CalendarDay, timeBetweenAppointments: number, appointmentDuration: number): boolean;
+export interface CalendarWeek {
+    weekString: string;
+    start: string;
+    end: string;
+    week: number;
+    days: CalendarDay[];
+}
 /**
  * Check if the week is available
  * @param weekData
- * @param timeBetweenAppointments
- * @param appointmentDuration
  */
-export declare function checkWeekAvailable(weekData: CalendarDay[], timeBetweenAppointments: number, appointmentDuration: number): boolean;
+export declare function checkWeekAvailable(weekData: CalendarDay[]): boolean;
 /**
- * Get all the events from the Google calendar
+ * Get the 6 next available weeks
  */
-export declare function getCalendarEvents(calendarConfig: CalendarConfigProps, timeMin: string, timeMax: string): Promise<number>;
+export declare function getAvailableWeeks(config: CalendarConfigProps, appointmentDuration: number, timeBetweenAppointments: number): Promise<CalendarWeek[]>;
+/**
+ * Get the events from the Google Calendar that are in the given weekNumber
+ * @param calendarConfig
+ * @param weekNum
+ */
+export declare function getWeekEvents(calendarConfig: CalendarConfigProps, weekNum: number): Promise<any[]>;
 /**
  * Create calendar appointment
  */
 export declare function makeCalendarEvent(calendarConfig: CalendarConfigProps, date: string, timeRange: string, displayName: string, phoneNumber: string): Promise<string>;
 /**
- * Sort the events into Slots and Appointments
+ * sort the event into a day object.
  */
-export declare function sortEvents(events: Schema$Event[]): {
-    timeSlots: any[];
-    appointments: any[];
-};
+export declare function sortEventByDay(events: GoogleCalendarEvent[], appointmentDuration: number, timeBetweenAppointments: number): CalendarDay[];
 /**
- * Returns all available slots
+ * Returns the slots for a given timeSlot(day)
  */
-export declare function getAvailableSlotsTotal(timeSlots: any[], appointments: any[], timeBetweenAppointments: number, appointmentDuration: number): any[];
-/**
- * Get the available weeks
- */
-export declare function getAvailableWeeks(allSlots: any[]): any;
-/**
- * Get the days of the week that are available
- */
-export declare function getDaysByWeek(allSlots: any[], weekNumber: number): any[];
-/**
- * Get the appointments by day
- */
-export declare function getAppointmentsByDay(allSlots: any[], date: string): any[];
+export declare function getSlotsForDay(appointments: GoogleCalendarEvent[], timeSlot: GoogleCalendarEvent, appointmentDuration: number, timeBetweenAppointments: number): Appointment[];

@@ -11,7 +11,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTimeRange = exports.getAppointmentString = exports.getDateString = exports.dateString = void 0;
+exports.getWeekString = exports.getTimeRange = exports.getAppointmentString = exports.getDateString = exports.dateString = void 0;
 /**
  * Gets the date string as specified in the options
  */
@@ -57,3 +57,16 @@ function getTimeRange(startDate, endDate) {
     return "".concat(startTime, " - ").concat(endTime);
 }
 exports.getTimeRange = getTimeRange;
+/**
+ * Gets a week string as "24 Oktober 2022 - 30 Oktober 2022"
+ * @param startDate
+ * @param endDate
+ * @param locale
+ * @param timeZone
+ */
+function getWeekString(startDate, endDate, locale, timeZone) {
+    if (locale === void 0) { locale = 'nl-NL'; }
+    if (timeZone === void 0) { timeZone = 'Europe/amsterdam'; }
+    return "".concat(getDateString(startDate, locale, timeZone), " - ").concat(getDateString(endDate, locale, timeZone));
+}
+exports.getWeekString = getWeekString;

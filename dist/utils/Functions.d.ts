@@ -14,3 +14,11 @@ export declare function getAppointmentString(start: string, end: string, locale?
  * Gets a time range from 2 date strings
  */
 export declare function getTimeRange(startDate: string, endDate: string): string;
+/**
+ * Gets a week string as "24 Oktober 2022 - 30 Oktober 2022"
+ * @param startDate
+ * @param endDate
+ * @param locale
+ * @param timeZone
+ */
+export declare function getWeekString(startDate: string, endDate: string, locale?: string, timeZone?: string): string;

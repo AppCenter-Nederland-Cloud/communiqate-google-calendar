@@ -41,3 +41,14 @@ export function getTimeRange(startDate: string, endDate: string) {
 
   return `${startTime} - ${endTime}`;
 }
+
+/**
+ * Gets a week string as "24 Oktober 2022 - 30 Oktober 2022"
+ * @param startDate
+ * @param endDate
+ * @param locale
+ * @param timeZone
+ */
+export function getWeekString(startDate: string, endDate: string, locale = 'nl-NL', timeZone = 'Europe/amsterdam') {
+  return `${getDateString(startDate, locale, timeZone)} - ${getDateString(endDate, locale, timeZone)}`;
+}
