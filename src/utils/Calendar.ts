@@ -388,7 +388,7 @@ function getAvailableSlotsForDay(
  * parses the date (DD-MM-YYYY) and time range (HH:mm - HH:mm) to 2 iso strings
  */
 
-export function parseIsoString(date: string, timeRange: string) {
+export function findDate(weeks: CalendarWeek[], date: string, timeRange: string) {
   const day = parseInt(date.split('-')[0]);
   const month = parseInt(date.split('-')[1]);
   const year = parseInt(date.split('-')[2]);
@@ -407,8 +407,33 @@ export function parseIsoString(date: string, timeRange: string) {
 
   const endDateTime = new Date(initialDate.setHours(endTimeHour, endTimeMinute));
 
-  return {
-    start: startDateTime,
-    end: endDateTime,
-  };
+  const string = getAppointmentString(startDateTime.toString(), endDateTime.toString(), 'nl-NL');
+
+  const slots: any[] = [];
+
+  weeks.forEach((week) => {
+    week.days.forEach((day) => {
+      day.slots.forEach((slot) => {
+        slots.push({
+          parsedString: getAppointmentString(slot.start, slot.end, 'nl-NL'),
+          start: slot.start,
+          end: slot.end,
+        });
+      });
+    });
+  });
+
+  const found = slots.find((slot) => slot.parsedString === string);
+
+  if (found) {
+    return {
+      start: found.start,
+      end: found.end,
+    };
+  } else {
+    return {
+      start: 'not_found',
+      end: 'not_found',
+    };
+  }
 }

@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.parseIsoString = exports.getSlotsForDay = exports.sortEventByDay = exports.makeCalendarEvent = exports.getWeekEvents = exports.getAvailableWeeks = exports.checkWeekAvailable = void 0;
+exports.findDate = exports.getSlotsForDay = exports.sortEventByDay = exports.makeCalendarEvent = exports.getWeekEvents = exports.getAvailableWeeks = exports.checkWeekAvailable = void 0;
 var Functions_1 = require("./Functions");
 var api_1 = require("../api");
 var dayjs = require('dayjs');
@@ -339,7 +339,7 @@ function getAvailableSlotsForDay(appointmentsToday, timeSlot, appointmentDuratio
 /**
  * parses the date (DD-MM-YYYY) and time range (HH:mm - HH:mm) to 2 iso strings
  */
-function parseIsoString(date, timeRange) {
+function findDate(weeks, date, timeRange) {
     var day = parseInt(date.split('-')[0]);
     var month = parseInt(date.split('-')[1]);
     var year = parseInt(date.split('-')[2]);
@@ -352,9 +352,31 @@ function parseIsoString(date, timeRange) {
     var initialDate = new Date("".concat(month, "/").concat(day, "/").concat(year));
     var startDateTime = new Date(initialDate.setHours(startTimeHour, startTimeMinute));
     var endDateTime = new Date(initialDate.setHours(endTimeHour, endTimeMinute));
-    return {
-        start: startDateTime,
-        end: endDateTime,
-    };
+    var string = (0, Functions_1.getAppointmentString)(startDateTime.toString(), endDateTime.toString(), 'nl-NL');
+    var slots = [];
+    weeks.forEach(function (week) {
+        week.days.forEach(function (day) {
+            day.slots.forEach(function (slot) {
+                slots.push({
+                    parsedString: (0, Functions_1.getAppointmentString)(slot.start, slot.end, 'nl-NL'),
+                    start: slot.start,
+                    end: slot.end,
+                });
+            });
+        });
+    });
+    var found = slots.find(function (slot) { return slot.parsedString === string; });
+    if (found) {
+        return {
+            start: found.start,
+            end: found.end,
+        };
+    }
+    else {
+        return {
+            start: 'not_found',
+            end: 'not_found',
+        };
+    }
 }
-exports.parseIsoString = parseIsoString;
+exports.findDate = findDate;

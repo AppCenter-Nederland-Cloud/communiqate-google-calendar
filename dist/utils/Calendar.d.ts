@@ -58,7 +58,7 @@ export declare function getSlotsForDay(appointments: GoogleCalendarEvent[], time
 /**
  * parses the date (DD-MM-YYYY) and time range (HH:mm - HH:mm) to 2 iso strings
  */
-export declare function parseIsoString(date: string, timeRange: string): {
-    start: Date;
-    end: Date;
+export declare function findDate(weeks: CalendarWeek[], date: string, timeRange: string): {
+    start: any;
+    end: any;
 };
