@@ -34,15 +34,16 @@ exports.getDateString = getDateString;
 /**
  * gets the appointment string as "woensdag 18 januari 2023 tussen 16:00 en 16:30"
  */
-function getAppointmentString(start, end, locale) {
+function getAppointmentString(start, end, locale, timeZone) {
     if (locale === void 0) { locale = 'nl-NL'; }
-    var date = dateString(start, locale, 'Europe/Amsterdam', {
+    if (timeZone === void 0) { timeZone = 'Europe/Amsterdam'; }
+    var date = dateString(start, locale, timeZone, {
         dateStyle: 'full',
     });
-    var startTime = dateString(start, locale, 'Europe/Amsterdam', {
+    var startTime = dateString(start, locale, timeZone, {
         timeStyle: 'short',
     });
-    var endTime = dateString(end, locale, 'Europe/Amsterdam', {
+    var endTime = dateString(end, locale, timeZone, {
         timeStyle: 'short',
     });
     return "".concat(date, " tussen ").concat(startTime, " en ").concat(endTime);

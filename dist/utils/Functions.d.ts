@@ -9,7 +9,7 @@ export declare function getDateString(date: string, locale?: string, timeZone?: 
 /**
  * gets the appointment string as "woensdag 18 januari 2023 tussen 16:00 en 16:30"
  */
-export declare function getAppointmentString(start: string, end: string, locale?: string): string;
+export declare function getAppointmentString(start: string, end: string, locale?: string, timeZone?: string): string;
 /**
  * Gets a time range from 2 date strings
  */

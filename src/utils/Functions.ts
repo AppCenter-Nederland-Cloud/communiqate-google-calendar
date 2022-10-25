@@ -18,14 +18,14 @@ export function getDateString(date: string, locale = 'nl-NL', timeZone = 'Europe
 /**
  * gets the appointment string as "woensdag 18 januari 2023 tussen 16:00 en 16:30"
  */
-export function getAppointmentString(start: string, end: string, locale = 'nl-NL') {
-  const date = dateString(start, locale, 'Europe/Amsterdam', {
+export function getAppointmentString(start: string, end: string, locale = 'nl-NL', timeZone = 'Europe/Amsterdam') {
+  const date = dateString(start, locale, timeZone, {
     dateStyle: 'full',
   });
-  const startTime = dateString(start, locale, 'Europe/Amsterdam', {
+  const startTime = dateString(start, locale, timeZone, {
     timeStyle: 'short',
   });
-  const endTime = dateString(end, locale, 'Europe/Amsterdam', {
+  const endTime = dateString(end, locale, timeZone, {
     timeStyle: 'short',
   });
 

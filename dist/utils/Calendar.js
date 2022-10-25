@@ -353,6 +353,7 @@ function findDate(weeks, date, timeRange) {
     var startDateTime = new Date(initialDate.setHours(startTimeHour, startTimeMinute));
     var endDateTime = new Date(initialDate.setHours(endTimeHour, endTimeMinute));
     var string = (0, Functions_1.getAppointmentString)(startDateTime.toString(), endDateTime.toString(), 'nl-NL');
+    console.log('str', string);
     var slots = [];
     weeks.forEach(function (week) {
         week.days.forEach(function (day) {
