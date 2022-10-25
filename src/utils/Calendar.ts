@@ -1,7 +1,6 @@
-import { calendar_v3, google } from 'googleapis';
+import { calendar_v3 } from 'googleapis';
 
-import Schema$Event = calendar_v3.Schema$Event;
-import { dateString, getAppointmentString, getDateString, getWeekString } from './Functions';
+import { getAppointmentString, getWeekString } from './Functions';
 import { GoogleCalendar } from '../api';
 import Schema$EventDateTime = calendar_v3.Schema$EventDateTime;
 
@@ -49,83 +48,6 @@ function getMinutesBetween(first: string, second: string) {
   return dayjs(second).diff(first, 'minute');
 }
 
-// /**
-//  * Check if that day is available
-//  * @param day
-//  */
-// export function checkDayAvailable(day: CalendarDay) {
-//   //, timeBetweenAppointments: number, appointmentDuration: number
-//   //if there are no slots,
-//   //day is not available
-//
-//   // if(day.slots.length > 0) {
-//   //   return true;
-//   // } else {
-//   //   return false;
-//   // }
-//
-//   return
-//
-//   // for (let i = 0; i < day.slots.length; i++) {
-//   //
-//   // }
-//   //
-//   // if (day.slots.length > 0) {
-//   //   // for each slot
-//   //   for (let i = 0; i < day.slots.length; i++) {
-//   //     //get the appointment
-//   //     const appointment = day.slots[i];
-//   //
-//   //     if (i === 0) {
-//   //       //this is the first appointment
-//   //
-//   //       //get the time between the start of the day and the start of the appointment
-//   //       const first = dayjs(day.start).add(timeBetweenAppointments, 'minute');
-//   //       const second = dayjs(appointment.start).add(-timeBetweenAppointments, 'minute');
-//   //       const minutesBetween = getMinutesBetween(first, second);
-//   //
-//   //       //if that is greater than appointmentDuration return true else continue
-//   //       if (minutesBetween > appointmentDuration) {
-//   //         return true;
-//   //       }
-//   //     }
-//   //
-//   //     // check if there is a next appointment
-//   //     if (day.slots.length > i + 1) {
-//   //       //there is a next appointment
-//   //       const nextAppointment = day.slots[i + 1];
-//   //
-//   //       //get the minutes between the end of the first appointment and the start of the next appointment
-//   //       const first = dayjs(appointment.end).add(timeBetweenAppointments, 'minute');
-//   //       const second = dayjs(nextAppointment.start).add(-timeBetweenAppointments, 'minute');
-//   //       const minutesBetween = getMinutesBetween(first, second);
-//   //
-//   //       //if that is greater than appointmentDuration return true else continue
-//   //       if (minutesBetween > appointmentDuration) {
-//   //         return true;
-//   //       }
-//   //
-//   //       //if that is greater than appointmentDuration return true else continue
-//   //     } else {
-//   //       //get the minutes between the end of the appointment and the end of the day
-//   //       const first = dayjs(appointment.end).add(timeBetweenAppointments, 'minute');
-//   //       const second = dayjs(day.end).add(-timeBetweenAppointments, 'minute');
-//   //       const minutesBetween = getMinutesBetween(first, second);
-//   //
-//   //       //if that is greater than appointmentDuration return true else continue
-//   //
-//   //       if (minutesBetween > appointmentDuration) {
-//   //         return true;
-//   //       }
-//   //     }
-//   //   }
-//   // } else {
-//   //   // there are no appointments so the whole day is available
-//   //   return true;
-//   // }
-//   // return false;
-// }
-
 /**
  * Check if the week is available
  * @param weekData
@@ -163,9 +85,8 @@ export async function getAvailableWeeks(
       .startOf('isoWeek')
       .isoWeek();
 
-    //TODO:
-    //getWeekData
     const weekEvents = await getWeekEvents(config, weekNum);
+
     if (weekEvents) {
       //checkWeekAvailable
       const weekAsDay = sortEventByDay(weekEvents, appointmentDuration, timeBetweenAppointments);
@@ -227,6 +148,7 @@ async function getSortedEvents(
 
   if (event.data.items) {
     event.data.items.forEach((item) => {
+      //if date is greater than current date
       newEvents.push({
         id: item.id,
         title: item.summary,
@@ -270,62 +192,31 @@ export async function getWeekEvents(calendarConfig: CalendarConfigProps, weekNum
  */
 export async function makeCalendarEvent(
   calendarConfig: CalendarConfigProps,
-  date: string,
-  timeRange: string,
+  startDate: string,
+  endDate: string,
   displayName: string,
   phoneNumber: string,
 ) {
   const { GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID } = calendarConfig;
 
-  const jwtClient = new google.auth.JWT(
-    GOOGLE_CLIENT_EMAIL,
-    undefined,
-    GOOGLE_PRIVATE_KEY,
-    'https://www.googleapis.com/auth/calendar',
-  );
-
-  const calendar = google.calendar({
-    version: 'v3',
-    auth: jwtClient,
-  });
-
-  const day = parseInt(date.split('/')[0]);
-  const month = parseInt(date.split('/')[1]);
-  const year = parseInt(date.split('/')[2]);
-
-  const startTime = timeRange.split('-')[0];
-  const endTime = timeRange.split('-')[1];
-
-  const startTimeHour = parseInt(startTime.split(':')[0]);
-  const startTimeMinute = parseInt(startTime.split(':')[1]);
-  const endTimeHour = parseInt(endTime.split(':')[0]);
-  const endTimeMinute = parseInt(endTime.split(':')[1]);
-
-  const initialDate = new Date(`${month}/${day}/${year}`);
-
-  const startDateTime = new Date(initialDate.setHours(startTimeHour, startTimeMinute));
-
-  const endDateTime = new Date(initialDate.setHours(endTimeHour, endTimeMinute));
+  const calendar = new GoogleCalendar(GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID);
 
   const event = {
     summary: `Afspraak met ${displayName}`,
     start: {
       //dateTime: dayjs(startDateTime).utc().tz("Europe/Amsterdam").format()
-      dateTime: dayjs(startDateTime).add(-2, 'hour').format(),
+      dateTime: dayjs(startDate).add(-2, 'hour').format(),
     },
     end: {
       //dateTime: dayjs(endDateTime).utc().tz("Europe/Amsterdam").format()
-      dateTime: dayjs(endDateTime).add(-2, 'hour').format(),
+      dateTime: dayjs(endDate).add(-2, 'hour').format(),
     },
     description: `Afspraak gemaakt door ${displayName} met telefoonnummer ${phoneNumber}`,
   };
 
-  calendar.events.insert({
-    calendarId: GOOGLE_CALENDAR_ID,
-    requestBody: event,
-  });
+  const calEvent = await calendar.createEvent(event);
 
-  return getAppointmentString(startDateTime.toISOString(), endDateTime.toISOString(), 'nl-NL');
+  return getAppointmentString(startDate, endDate, 'nl-NL');
 }
 
 /**
@@ -378,14 +269,9 @@ export function getSlotsForDay(
 
   const slots = getAvailableSlotsForDay(filtered, timeSlot, appointmentDuration, timeBetweenAppointments);
 
-  // const appointmentsAsAppointment: Appointment[] = filtered.map((appointment) => {
-  //   return {
-  //     start: appointment.start?.dateTime || '',
-  //     end: appointment.end?.dateTime || '',
-  //   };
-  // });
+  const filteredSlots = slots.filter((slot) => dayjs(slot.start).isAfter(dayjs().format()));
 
-  return slots;
+  return filteredSlots;
 }
 
 /**
@@ -500,145 +386,31 @@ function getAvailableSlotsForDay(
   return availableSlotsToday;
 }
 
-////// Old ////////
-//
-// /**
-//  * Returns all available slots
-//  */
-// export function getAvailableSlotsTotal(
-//   timeSlots: any[],
-//   appointments: any[],
-//   timeBetweenAppointments: number,
-//   appointmentDuration: number,
-// ) {
-//   const allSlots: any[] = [];
-//
-//   timeSlots.forEach((timeSlot) => {
-//     const appointmentsToday = getAppointmentsForTimeSlot(appointments, timeSlot);
-//
-//     const availableTimeToday = getAvailableTimeForDay(appointmentsToday, timeSlot, timeBetweenAppointments);
-//
-//     // const availableSlotsToday = getAvailableSlotsToday(
-//     //   availableTimeToday,
-//     //   appointmentDuration,
-//     //   timeBetweenAppointments,
-//     // );
-//
-//     availableSlotsToday.forEach((slot: any) => {
-//       if (dayjs(slot.startTime).isAfter(dayjs())) {
-//         allSlots.push({
-//           fullString: getAppointmentString(slot.startTime, slot.endTime, 'nl-NL'),
-//           startDate: slot.startTime,
-//           endDate: slot.endTime,
-//         });
-//       }
-//     });
-//   });
-//   return allSlots;
-// }
-// //OLD
-// // /**
-// //  * Get the available weeks
-// //  */
-// // export function getAvailableWeeks(allSlots: any[]) {
-// //   const weeks: any = {};
-// //
-// //   allSlots.forEach((slot) => {
-// //     const date = dayjs(slot.startDate);
-// //     const weekNum = date.isoWeek();
-// //
-// //     weeks[weekNum] = {
-// //       title: `week ${weekNum}`,
-// //       startDate: date.startOf('isoWeek').format(),
-// //       description: `${getDateString(date.startOf('isoWeek').format())} tot ${getDateString(
-// //         date.endOf('isoWeek').format(),
-// //       )}`,
-// //       number: weekNum,
-// //     };
-// //   });
-// //
-// //   return weeks;
-// // }
-// //
-// // /**
-// //  * Get the days of the week that are available
-// //  */
-// // export function getDaysByWeek(allSlots: any[], weekNumber: number) {
-// //   const days: any[] = [];
-// //
-// //   allSlots.forEach((slot) => {
-// //     const day = dateString(slot.startDate, 'nl-NL', 'Europe/Amsterdam', { dateStyle: 'full' });
-// //     const weekNum = dayjs(slot.startDate).isoWeek();
-// //
-// //     if (weekNum === weekNumber) {
-// //       if (days.find((d) => d.parsedDate === day)) {
-// //       } else {
-// //         days.push({
-// //           parsedDate: day,
-// //           actualDate: dayjs(slot.startDate).format('DD/MM/YYYY'),
-// //         });
-// //       }
-// //     }
-// //   });
-// //
-// //   return days;
-// // }
-// //
-// // /**
-// //  * Get the appointments by day
-// //  */
-// // export function getAppointmentsByDay(allSlots: any[], date: string) {
-// //   const days: any[] = [];
-// //
-// //   allSlots.forEach((slot) => {
-// //     const day = dayjs(slot.startDate).format('DD/MM/YYYY');
-// //
-// //     if (day === date) {
-// //       if (days.length < 9) {
-// //         days.push(slot);
-// //       }
-// //     }
-// //   });
-// //
-// //   return days;
-// // }
-/// OLD
+/**
+ * parses the date (DD-MM-YYYY) and time range (HH:mm - HH:mm) to 2 iso strings
+ */
 
-// /**
-//  * Sort the appointments to date
-//  */
-// export function sortAvailabilityAndAppointments(items: any[]) {
-//   const newEvents: any = {};
-//
-//   items.forEach((item) => {
-//     const date = dayjs(item.start.dateTime).format('DD/MM/YYYY');
-//
-//     if (newEvents[date]) {
-//       //is appointment
-//       newEvents[date].appointments = [
-//         ...(newEvents[date].appointments ? newEvents[date].appointments : []),
-//         {
-//           id: item.id,
-//           title: item.summary,
-//           description: item.description,
-//           start: item.start.dateTime,
-//           end: item.end.dateTime,
-//         },
-//       ];
-//     } else {
-//       //is timeSlot
-//       newEvents[date] = {
-//         start: item.start.dateTime,
-//         end: item.end.dateTime,
-//         appointments: [],
-//       };
-//     }
-//   });
-//
-//   return newEvents;
-// }
-//
-// /**
-//  * Get the available time for the given day
-//  */
-// function getAvailableTimeDay(today: any[], timeBetweenAppointments: number) {}
+export function parseIsoString(date: string, timeRange: string) {
+  const day = parseInt(date.split('-')[0]);
+  const month = parseInt(date.split('-')[1]);
+  const year = parseInt(date.split('-')[2]);
+
+  const startTime = timeRange.split('-')[0];
+  const endTime = timeRange.split('-')[1];
+
+  const startTimeHour = parseInt(startTime.split(':')[0]);
+  const startTimeMinute = parseInt(startTime.split(':')[1]);
+  const endTimeHour = parseInt(endTime.split(':')[0]);
+  const endTimeMinute = parseInt(endTime.split(':')[1]);
+
+  const initialDate = new Date(`${month}/${day}/${year}`);
+
+  const startDateTime = new Date(initialDate.setHours(startTimeHour, startTimeMinute));
+
+  const endDateTime = new Date(initialDate.setHours(endTimeHour, endTimeMinute));
+
+  return {
+    start: startDateTime,
+    end: endDateTime,
+  };
+}

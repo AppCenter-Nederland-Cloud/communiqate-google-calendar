@@ -46,7 +46,7 @@ export declare function getWeekEvents(calendarConfig: CalendarConfigProps, weekN
 /**
  * Create calendar appointment
  */
-export declare function makeCalendarEvent(calendarConfig: CalendarConfigProps, date: string, timeRange: string, displayName: string, phoneNumber: string): Promise<string>;
+export declare function makeCalendarEvent(calendarConfig: CalendarConfigProps, startDate: string, endDate: string, displayName: string, phoneNumber: string): Promise<string>;
 /**
  * sort the event into a day object.
  */
@@ -55,3 +55,10 @@ export declare function sortEventByDay(events: GoogleCalendarEvent[], appointmen
  * Returns the slots for a given timeSlot(day)
  */
 export declare function getSlotsForDay(appointments: GoogleCalendarEvent[], timeSlot: GoogleCalendarEvent, appointmentDuration: number, timeBetweenAppointments: number): Appointment[];
+/**
+ * parses the date (DD-MM-YYYY) and time range (HH:mm - HH:mm) to 2 iso strings
+ */
+export declare function parseIsoString(date: string, timeRange: string): {
+    start: Date;
+    end: Date;
+};
