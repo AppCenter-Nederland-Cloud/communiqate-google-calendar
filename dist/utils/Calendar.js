@@ -193,12 +193,10 @@ function makeCalendarEvent(calendarConfig, startDate, endDate, displayName, phon
                     event = {
                         summary: "Afspraak met ".concat(displayName),
                         start: {
-                            //dateTime: dayjs(startDateTime).utc().tz("Europe/Amsterdam").format()
-                            dateTime: dayjs(startDate).add(-2, 'hour').format(),
+                            dateTime: dayjs(startDate).format(),
                         },
                         end: {
-                            //dateTime: dayjs(endDateTime).utc().tz("Europe/Amsterdam").format()
-                            dateTime: dayjs(endDate).add(-2, 'hour').format(),
+                            dateTime: dayjs(endDate).format(),
                         },
                         description: "Afspraak gemaakt door ".concat(displayName, " met telefoonnummer ").concat(phoneNumber),
                     };

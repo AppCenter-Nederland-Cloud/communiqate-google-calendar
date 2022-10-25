@@ -204,12 +204,10 @@ export async function makeCalendarEvent(
   const event = {
     summary: `Afspraak met ${displayName}`,
     start: {
-      //dateTime: dayjs(startDateTime).utc().tz("Europe/Amsterdam").format()
-      dateTime: dayjs(startDate).add(-2, 'hour').format(),
+      dateTime: dayjs(startDate).format(),
     },
     end: {
-      //dateTime: dayjs(endDateTime).utc().tz("Europe/Amsterdam").format()
-      dateTime: dayjs(endDate).add(-2, 'hour').format(),
+      dateTime: dayjs(endDate).format(),
     },
     description: `Afspraak gemaakt door ${displayName} met telefoonnummer ${phoneNumber}`,
   };
