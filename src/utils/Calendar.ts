@@ -409,6 +409,8 @@ export function findDate(weeks: CalendarWeek[], date: string, timeRange: string)
 
   const string = getAppointmentString(startDateTime.toString(), endDateTime.toString(), 'nl-NL');
 
+  console.log('str', string);
+
   const slots: any[] = [];
 
   weeks.forEach((week) => {
