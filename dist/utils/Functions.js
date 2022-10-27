@@ -43,10 +43,10 @@ function getAppointmentString(start, end, locale, timeZone) {
     var startTime = dateString(start, locale, timeZone, {
         timeStyle: 'short',
     });
-    var endTime = dateString(end, locale, timeZone, {
-        timeStyle: 'short',
-    });
-    return "".concat(date, " tussen ").concat(startTime, " en ").concat(endTime);
+    // const endTime = dateString(end, locale, timeZone, {
+    //   timeStyle: 'short',
+    // });
+    return "".concat(date, " om ").concat(startTime);
 }
 exports.getAppointmentString = getAppointmentString;
 /**

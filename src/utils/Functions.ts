@@ -25,11 +25,11 @@ export function getAppointmentString(start: string, end: string, locale = 'nl-NL
   const startTime = dateString(start, locale, timeZone, {
     timeStyle: 'short',
   });
-  const endTime = dateString(end, locale, timeZone, {
-    timeStyle: 'short',
-  });
+  // const endTime = dateString(end, locale, timeZone, {
+  //   timeStyle: 'short',
+  // });
 
-  return `${date} tussen ${startTime} en ${endTime}`;
+  return `${date} om ${startTime}`;
 }
 
 /**
