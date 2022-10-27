@@ -71,7 +71,7 @@ export async function sendDaysMessage(config: MessageBirdConfig, days: CalendarD
   rows.push({
     id: 'anders',
     title: 'Andere week kiezen',
-    description: 'U gaat terug naar de vorige stap om voor een andere week te kiezen',
+    description: 'Kies deze optie wanneer je toch een moment wil kiezen in een andere week.',
   });
 
   await MessageBirdMessages.post('/messages', {
@@ -79,12 +79,8 @@ export async function sendDaysMessage(config: MessageBirdConfig, days: CalendarD
     content: {
       interactive: {
         type: 'list',
-        header: {
-          type: 'text',
-          text: 'Afspraak planner',
-        },
         body: {
-          text: 'Dit zijn de dagen die beschikbaar zijn voor deze week, wil je toch een andere week kiezen? Kies dan voor Andere week kiezen.',
+          text: 'Hieronder kun je kiezen uit de beschikbare dagen voor de door jouw gekozen week.',
         },
         action: {
           sections: [
@@ -93,7 +89,7 @@ export async function sendDaysMessage(config: MessageBirdConfig, days: CalendarD
               rows: rows,
             },
           ],
-          button: 'Datum kiezen',
+          button: 'Dag kiezen',
         },
       },
     },
@@ -135,7 +131,7 @@ export async function sendAppointmentMessage(
   rows.push({
     id: 'anders',
     title: 'Andere dag kiezen',
-    description: 'Kies voor deze optie als u voor een andere dag een afspraak wilt maken.',
+    description: 'Kies deze optie wanneer je toch een moment wil kiezen op een andere dag.',
   });
 
   return await MessageBirdMessages.post('/messages', {
@@ -143,12 +139,8 @@ export async function sendAppointmentMessage(
     content: {
       interactive: {
         type: 'list',
-        header: {
-          type: 'text',
-          text: 'Afspraak planner',
-        },
         body: {
-          text: 'Dit zijn de tijden die beschikbaar zijn voor deze dag, wil je toch een andere dag kiezen? Kies dan voor andere dag kiezen.',
+          text: 'Hieronder kun je kiezen uit de beschikbare tijdstippen voor de door jouw gekozen dag.',
         },
         action: {
           sections: [
