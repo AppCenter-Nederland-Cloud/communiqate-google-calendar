@@ -159,11 +159,13 @@ function sendAppointmentMessage(config, appointments, dateResponse) {
                         var title = "".concat((0, Functions_1.dateString)(appointment.start, 'nl-NL', 'Europe/Amsterdam', {
                             timeStyle: 'short',
                         }), " - ").concat((0, Functions_1.dateString)(appointment.end, 'nl-NL', 'Europe/Amsterdam', { timeStyle: 'short' }));
-                        rows.push({
-                            id: appointment.start,
-                            title: title,
-                            description: (0, Functions_1.getAppointmentString)(appointment.start, appointment.end),
-                        });
+                        if (rows.length < 9) {
+                            rows.push({
+                                id: appointment.start,
+                                title: title,
+                                description: (0, Functions_1.getAppointmentString)(appointment.start, appointment.end),
+                            });
+                        }
                     });
                     rows.push({
                         id: 'anders',
