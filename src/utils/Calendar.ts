@@ -112,19 +112,6 @@ export async function getAvailableWeeks(
     } else {
       console.error('no calendar events available');
     }
-
-    //get week data (startOfWeek, endOfWeek);
-    //if week data exists:
-
-    //check availability.
-    //IF AVAILABLE
-    //add to available array
-    //add 1 week
-    //IF NOT AVAILABLE
-    //add 1 week
-
-    //if week data does not exist:
-    //add 1 week
   }
   return availableWeeks;
 }
@@ -165,10 +152,6 @@ async function getSortedEvents(
   }
 
   if (!nextPageToken) {
-    //sortEvents();
-
-    //sort the events (events) => [day[]]
-    //for each timeSlot => find the events
     return newEvents;
   }
 
@@ -211,7 +194,6 @@ export async function makeCalendarEvent(
     end: {
       dateTime: dayjs(endDate).format(),
     },
-    //attendees: [{ email: 'justin@appcenternederland.nl' }],
   };
 
   const calEvent = await calendar.createEvent(event);

@@ -148,9 +148,6 @@ function getSortedEvents(calendar, weekNumber, passedDownEvents, pageToken) {
                         nextPageToken = event.data.nextPageToken;
                     }
                     if (!nextPageToken) {
-                        //sortEvents();
-                        //sort the events (events) => [day[]]
-                        //for each timeSlot => find the events
                         return [2 /*return*/, newEvents];
                     }
                     return [4 /*yield*/, getSortedEvents(calendar, weekNumber, newEvents, nextPageToken)];
@@ -200,7 +197,6 @@ function makeCalendarEvent(calendarConfig, startDate, endDate, title, descriptio
                         end: {
                             dateTime: dayjs(endDate).format(),
                         },
-                        attendees: [{ email: 'justin@appcenternederland.nl' }],
                     };
                     return [4 /*yield*/, calendar.createEvent(event)];
                 case 1:
@@ -246,10 +242,7 @@ function getSlotsForDay(appointments, timeSlot, appointmentDuration, timeBetween
             appointment.title !== 'Beschikbaar';
     });
     var slots = getAvailableSlotsForDay(filtered, timeSlot, appointmentDuration, timeBetweenAppointments);
-    var filteredSlots = slots.filter(function (slot) {
-        return dayjs(slot.start).isAfter(dayjs().add(timeInAdvance, 'minute').format());
-    });
-    return filteredSlots;
+    return slots.filter(function (slot) { return dayjs(slot.start).isAfter(dayjs().add(timeInAdvance, 'minutes').format()); });
 }
 exports.getSlotsForDay = getSlotsForDay;
 /**
