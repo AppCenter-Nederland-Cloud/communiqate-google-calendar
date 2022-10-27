@@ -79,7 +79,7 @@ function getAvailableWeeks(config, appointmentDuration, timeBetweenAppointments,
                     availableWeeks = [];
                     _a.label = 1;
                 case 1:
-                    if (!(availableWeeks.length < 6)) return [3 /*break*/, 3];
+                    if (!(availableWeeks.length < 8)) return [3 /*break*/, 3];
                     weekNum = dayjs()
                         .isoWeek(currentWeek + weekIndex)
                         .startOf('isoWeek')

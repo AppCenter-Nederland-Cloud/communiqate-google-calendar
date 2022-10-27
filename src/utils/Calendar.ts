@@ -80,7 +80,7 @@ export async function getAvailableWeeks(
   let weekIndex = 0;
   const availableWeeks: CalendarWeek[] = [];
 
-  while (availableWeeks.length < 6) {
+  while (availableWeeks.length < 8) {
     const weekNum = dayjs()
       .isoWeek(currentWeek + weekIndex)
       .startOf('isoWeek')

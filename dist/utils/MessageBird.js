@@ -147,7 +147,6 @@ function sendAppointmentMessage(config, appointments, dateResponse) {
             switch (_a.label) {
                 case 0:
                     conversationId = config.conversationId, apiKey = config.apiKey;
-                    console.log('App', appointments);
                     rows = [];
                     MessageBirdMessages = axios.create({
                         baseURL: "".concat(url, "/").concat(conversationId),
@@ -172,7 +171,6 @@ function sendAppointmentMessage(config, appointments, dateResponse) {
                         title: 'Andere dag kiezen',
                         description: 'Kies voor deze optie als u voor een andere dag een afspraak wilt maken.',
                     });
-                    console.log('ROWS', rows);
                     return [4 /*yield*/, MessageBirdMessages.post('/messages', {
                             type: 'interactive',
                             content: {

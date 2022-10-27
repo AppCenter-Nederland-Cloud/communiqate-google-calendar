@@ -109,8 +109,6 @@ export async function sendAppointmentMessage(
 ) {
   const { conversationId, apiKey } = config;
 
-  console.log('App', appointments);
-
   const rows = [];
 
   const MessageBirdMessages = axios.create({
@@ -139,8 +137,6 @@ export async function sendAppointmentMessage(
     title: 'Andere dag kiezen',
     description: 'Kies voor deze optie als u voor een andere dag een afspraak wilt maken.',
   });
-
-  console.log('ROWS', rows);
 
   return await MessageBirdMessages.post('/messages', {
     type: 'interactive',
