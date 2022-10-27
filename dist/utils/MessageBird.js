@@ -108,7 +108,7 @@ function sendDaysMessage(config, days, weekNumber) {
                     rows.push({
                         id: 'anders',
                         title: 'Andere week kiezen',
-                        description: 'Kies deze optie wanneer je toch een moment wil kiezen in een andere week.',
+                        description: 'Kies deze optie wanneer je een moment wil kiezen in een andere week.',
                     });
                     return [4 /*yield*/, MessageBirdMessages.post('/messages', {
                             type: 'interactive',
@@ -167,7 +167,7 @@ function sendAppointmentMessage(config, appointments, dateResponse) {
                     rows.push({
                         id: 'anders',
                         title: 'Andere dag kiezen',
-                        description: 'Kies deze optie wanneer je toch een moment wil kiezen op een andere dag.',
+                        description: 'Kies deze optie wanneer je een moment wil kiezen op een andere dag.',
                     });
                     return [4 /*yield*/, MessageBirdMessages.post('/messages', {
                             type: 'interactive',

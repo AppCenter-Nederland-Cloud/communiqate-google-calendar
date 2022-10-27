@@ -73,7 +73,7 @@ export async function sendDaysMessage(config: MessageBirdConfig, days: CalendarD
   rows.push({
     id: 'anders',
     title: 'Andere week kiezen',
-    description: 'Kies deze optie wanneer je toch een moment wil kiezen in een andere week.',
+    description: 'Kies deze optie wanneer je een moment wil kiezen in een andere week.',
   });
 
   await MessageBirdMessages.post('/messages', {
@@ -133,7 +133,7 @@ export async function sendAppointmentMessage(
   rows.push({
     id: 'anders',
     title: 'Andere dag kiezen',
-    description: 'Kies deze optie wanneer je toch een moment wil kiezen op een andere dag.',
+    description: 'Kies deze optie wanneer je een moment wil kiezen op een andere dag.',
   });
 
   return await MessageBirdMessages.post('/messages', {
