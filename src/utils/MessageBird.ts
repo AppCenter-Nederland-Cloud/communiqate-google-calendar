@@ -125,11 +125,13 @@ export async function sendAppointmentMessage(
       timeStyle: 'short',
     })} - ${dateString(appointment.end, 'nl-NL', 'Europe/Amsterdam', { timeStyle: 'short' })}`;
 
-    rows.push({
-      id: appointment.start,
-      title: title,
-      description: getAppointmentString(appointment.start, appointment.end),
-    });
+    if (rows.length < 9) {
+      rows.push({
+        id: appointment.start,
+        title: title,
+        description: getAppointmentString(appointment.start, appointment.end),
+      });
+    }
   });
 
   rows.push({
