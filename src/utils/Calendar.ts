@@ -74,6 +74,7 @@ export async function getAvailableWeeks(
   config: CalendarConfigProps,
   appointmentDuration: number,
   timeBetweenAppointments: number,
+  timeInAdvance: number,
 ) {
   const currentWeek = dayjs().isoWeek();
   let weekIndex = 0;
@@ -89,7 +90,7 @@ export async function getAvailableWeeks(
 
     if (weekEvents) {
       //checkWeekAvailable
-      const weekAsDay = sortEventByDay(weekEvents, appointmentDuration, timeBetweenAppointments);
+      const weekAsDay = sortEventByDay(weekEvents, appointmentDuration, timeBetweenAppointments, timeInAdvance);
 
       const available = checkWeekAvailable(weekAsDay);
 
@@ -194,22 +195,23 @@ export async function makeCalendarEvent(
   calendarConfig: CalendarConfigProps,
   startDate: string,
   endDate: string,
-  displayName: string,
-  phoneNumber: string,
+  title: string,
+  description = '',
 ) {
   const { GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID } = calendarConfig;
 
   const calendar = new GoogleCalendar(GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID);
 
   const event = {
-    summary: `Afspraak met ${displayName}`,
+    summary: title,
+    description: description,
     start: {
       dateTime: dayjs(startDate).format(),
     },
     end: {
       dateTime: dayjs(endDate).format(),
     },
-    description: `Afspraak gemaakt door ${displayName} met telefoonnummer ${phoneNumber}`,
+    //attendees: [{ email: 'justin@appcenternederland.nl' }],
   };
 
   const calEvent = await calendar.createEvent(event);
@@ -224,6 +226,7 @@ export function sortEventByDay(
   events: GoogleCalendarEvent[],
   appointmentDuration: number,
   timeBetweenAppointments: number,
+  timeInAdvance: number,
 ) {
   const timeSlots: GoogleCalendarEvent[] = [];
 
@@ -243,7 +246,7 @@ export function sortEventByDay(
     days.push({
       start: timeSlot.start?.dateTime || '',
       end: timeSlot.end?.dateTime || '',
-      slots: getSlotsForDay(events, timeSlot, appointmentDuration, timeBetweenAppointments),
+      slots: getSlotsForDay(events, timeSlot, appointmentDuration, timeBetweenAppointments, timeInAdvance),
     });
   });
 
@@ -258,6 +261,7 @@ export function getSlotsForDay(
   timeSlot: GoogleCalendarEvent,
   appointmentDuration: number,
   timeBetweenAppointments: number,
+  timeInAdvance: number,
 ) {
   const filtered = appointments.filter(
     (appointment) =>
@@ -267,9 +271,7 @@ export function getSlotsForDay(
 
   const slots = getAvailableSlotsForDay(filtered, timeSlot, appointmentDuration, timeBetweenAppointments);
 
-  const filteredSlots = slots.filter((slot) => dayjs(slot.start).isAfter(dayjs().format()));
-
-  return filteredSlots;
+  return slots.filter((slot) => dayjs(slot.start).isAfter(dayjs().add(timeInAdvance, 'minutes').format()));
 }
 
 /**
@@ -385,9 +387,8 @@ function getAvailableSlotsForDay(
 }
 
 /**
- * parses the date (DD-MM-YYYY) and time range (HH:mm - HH:mm) to 2 iso strings
+ * Finds the corresponding date and returns it
  */
-
 export function findDate(weeks: CalendarWeek[], date: string, timeRange: string) {
   const day = parseInt(date.split('-')[0]);
   const month = parseInt(date.split('-')[1]);

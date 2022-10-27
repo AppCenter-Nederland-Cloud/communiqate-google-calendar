@@ -68,7 +68,7 @@ exports.checkWeekAvailable = checkWeekAvailable;
 /**
  * Get the 6 next available weeks
  */
-function getAvailableWeeks(config, appointmentDuration, timeBetweenAppointments) {
+function getAvailableWeeks(config, appointmentDuration, timeBetweenAppointments, timeInAdvance) {
     return __awaiter(this, void 0, void 0, function () {
         var currentWeek, weekIndex, availableWeeks, weekNum, weekEvents, weekAsDay, available, startOfWeek, endOfWeek;
         return __generator(this, function (_a) {
@@ -88,7 +88,7 @@ function getAvailableWeeks(config, appointmentDuration, timeBetweenAppointments)
                 case 2:
                     weekEvents = _a.sent();
                     if (weekEvents) {
-                        weekAsDay = sortEventByDay(weekEvents, appointmentDuration, timeBetweenAppointments);
+                        weekAsDay = sortEventByDay(weekEvents, appointmentDuration, timeBetweenAppointments, timeInAdvance);
                         available = checkWeekAvailable(weekAsDay);
                         if (available) {
                             startOfWeek = dayjs().isoWeek(weekNum).startOf('isoWeek').format();
@@ -182,7 +182,8 @@ exports.getWeekEvents = getWeekEvents;
 /**
  * Create calendar appointment
  */
-function makeCalendarEvent(calendarConfig, startDate, endDate, displayName, phoneNumber) {
+function makeCalendarEvent(calendarConfig, startDate, endDate, title, description) {
+    if (description === void 0) { description = ''; }
     return __awaiter(this, void 0, void 0, function () {
         var GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID, calendar, event, calEvent;
         return __generator(this, function (_a) {
@@ -191,14 +192,15 @@ function makeCalendarEvent(calendarConfig, startDate, endDate, displayName, phon
                     GOOGLE_CLIENT_EMAIL = calendarConfig.GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY = calendarConfig.GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID = calendarConfig.GOOGLE_CALENDAR_ID;
                     calendar = new api_1.GoogleCalendar(GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID);
                     event = {
-                        summary: "Afspraak met ".concat(displayName),
+                        summary: title,
+                        description: description,
                         start: {
                             dateTime: dayjs(startDate).format(),
                         },
                         end: {
                             dateTime: dayjs(endDate).format(),
                         },
-                        description: "Afspraak gemaakt door ".concat(displayName, " met telefoonnummer ").concat(phoneNumber),
+                        attendees: [{ email: 'justin@appcenternederland.nl' }],
                     };
                     return [4 /*yield*/, calendar.createEvent(event)];
                 case 1:
@@ -212,7 +214,7 @@ exports.makeCalendarEvent = makeCalendarEvent;
 /**
  * sort the event into a day object.
  */
-function sortEventByDay(events, appointmentDuration, timeBetweenAppointments) {
+function sortEventByDay(events, appointmentDuration, timeBetweenAppointments, timeInAdvance) {
     var timeSlots = [];
     var days = [];
     //returns array of days
@@ -228,7 +230,7 @@ function sortEventByDay(events, appointmentDuration, timeBetweenAppointments) {
         days.push({
             start: ((_a = timeSlot.start) === null || _a === void 0 ? void 0 : _a.dateTime) || '',
             end: ((_b = timeSlot.end) === null || _b === void 0 ? void 0 : _b.dateTime) || '',
-            slots: getSlotsForDay(events, timeSlot, appointmentDuration, timeBetweenAppointments),
+            slots: getSlotsForDay(events, timeSlot, appointmentDuration, timeBetweenAppointments, timeInAdvance),
         });
     });
     return days;
@@ -237,14 +239,16 @@ exports.sortEventByDay = sortEventByDay;
 /**
  * Returns the slots for a given timeSlot(day)
  */
-function getSlotsForDay(appointments, timeSlot, appointmentDuration, timeBetweenAppointments) {
+function getSlotsForDay(appointments, timeSlot, appointmentDuration, timeBetweenAppointments, timeInAdvance) {
     var filtered = appointments.filter(function (appointment) {
         var _a, _b;
         return dayjs((_a = appointment.end) === null || _a === void 0 ? void 0 : _a.dateTime).format('DD/MM/YYYY') === dayjs((_b = timeSlot.start) === null || _b === void 0 ? void 0 : _b.dateTime).format('DD/MM/YYYY') &&
             appointment.title !== 'Beschikbaar';
     });
     var slots = getAvailableSlotsForDay(filtered, timeSlot, appointmentDuration, timeBetweenAppointments);
-    var filteredSlots = slots.filter(function (slot) { return dayjs(slot.start).isAfter(dayjs().format()); });
+    var filteredSlots = slots.filter(function (slot) {
+        return dayjs(slot.start).isAfter(dayjs().add(timeInAdvance, 'minute').format());
+    });
     return filteredSlots;
 }
 exports.getSlotsForDay = getSlotsForDay;
@@ -337,7 +341,7 @@ function getAvailableSlotsForDay(appointmentsToday, timeSlot, appointmentDuratio
     return availableSlotsToday;
 }
 /**
- * parses the date (DD-MM-YYYY) and time range (HH:mm - HH:mm) to 2 iso strings
+ * Finds the corresponding date and returns it
  */
 function findDate(weeks, date, timeRange) {
     var day = parseInt(date.split('-')[0]);

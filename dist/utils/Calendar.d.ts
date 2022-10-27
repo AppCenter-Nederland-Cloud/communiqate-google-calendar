@@ -36,7 +36,7 @@ export declare function checkWeekAvailable(weekData: CalendarDay[]): boolean;
 /**
  * Get the 6 next available weeks
  */
-export declare function getAvailableWeeks(config: CalendarConfigProps, appointmentDuration: number, timeBetweenAppointments: number): Promise<CalendarWeek[]>;
+export declare function getAvailableWeeks(config: CalendarConfigProps, appointmentDuration: number, timeBetweenAppointments: number, timeInAdvance: number): Promise<CalendarWeek[]>;
 /**
  * Get the events from the Google Calendar that are in the given weekNumber
  * @param calendarConfig
@@ -46,17 +46,17 @@ export declare function getWeekEvents(calendarConfig: CalendarConfigProps, weekN
 /**
  * Create calendar appointment
  */
-export declare function makeCalendarEvent(calendarConfig: CalendarConfigProps, startDate: string, endDate: string, displayName: string, phoneNumber: string): Promise<string>;
+export declare function makeCalendarEvent(calendarConfig: CalendarConfigProps, startDate: string, endDate: string, title: string, description?: string): Promise<string>;
 /**
  * sort the event into a day object.
  */
-export declare function sortEventByDay(events: GoogleCalendarEvent[], appointmentDuration: number, timeBetweenAppointments: number): CalendarDay[];
+export declare function sortEventByDay(events: GoogleCalendarEvent[], appointmentDuration: number, timeBetweenAppointments: number, timeInAdvance: number): CalendarDay[];
 /**
  * Returns the slots for a given timeSlot(day)
  */
-export declare function getSlotsForDay(appointments: GoogleCalendarEvent[], timeSlot: GoogleCalendarEvent, appointmentDuration: number, timeBetweenAppointments: number): Appointment[];
+export declare function getSlotsForDay(appointments: GoogleCalendarEvent[], timeSlot: GoogleCalendarEvent, appointmentDuration: number, timeBetweenAppointments: number, timeInAdvance: number): Appointment[];
 /**
- * parses the date (DD-MM-YYYY) and time range (HH:mm - HH:mm) to 2 iso strings
+ * Finds the corresponding date and returns it
  */
 export declare function findDate(weeks: CalendarWeek[], date: string, timeRange: string): {
     start: any;
