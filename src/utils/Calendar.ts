@@ -251,8 +251,10 @@ export function getSlotsForDay(
       appointment.title !== 'Beschikbaar',
   );
 
+  //slots that are available for the given day
   const slots = getAvailableSlotsForDay(filtered, timeSlot, appointmentDuration, timeBetweenAppointments);
 
+  //return all the slots that are after right now (to exclude past slots) and the time offset.
   return slots.filter((slot) => dayjs(slot.start).isAfter(dayjs().add(timeInAdvance, 'minutes').format()));
 }
 
@@ -269,28 +271,31 @@ function getAvailableTimeForDay(
 ) {
   const availableTimeToday: any[] = [];
 
+  //if appointments exist
   if (appointmentsToday.length > 0) {
+    //for each appointment
     for (let i = 0; i < appointmentsToday.length; i++) {
       const selectedAppointment = appointmentsToday[i];
       let nextSelected = null;
 
+      //if appointment is first appointment of the day
       if (i === 0) {
         if (timeSlot.start?.dateTime && selectedAppointment.start?.dateTime) {
           const minutes = getMinutesBetween(timeSlot.start.dateTime, selectedAppointment.start.dateTime);
           if (minutes > 0) {
             availableTimeToday.push({
-              startTime: timeSlot.start.dateTime,
+              startTime: dayjs(timeSlot.start.dateTime).format(),
               minutesBetween: minutes,
-              endTime: selectedAppointment.start.dateTime,
+              endTime: dayjs(selectedAppointment.start.dateTime).add(timeBetweenAppointments, 'minute').format(),
             });
           }
         }
       }
 
+      //if another appointment exists
       if (appointmentsToday.length >= i + 1) {
         nextSelected = appointmentsToday[i + 1];
       }
-
       if (nextSelected) {
         if (nextSelected.start?.dateTime && selectedAppointment.end?.dateTime) {
           const minutes = getMinutesBetween(selectedAppointment.end.dateTime, nextSelected.start.dateTime);
@@ -299,19 +304,20 @@ function getAvailableTimeForDay(
             availableTimeToday.push({
               startTime: dayjs(selectedAppointment.end.dateTime).add(timeBetweenAppointments, 'minute').format(),
               minutesBetween: minutes - timeBetweenAppointments,
-              endTime: dayjs(nextSelected.start.dateTime).format(),
+              endTime: dayjs(nextSelected.start.dateTime).add(timeBetweenAppointments, 'minute').format(),
             });
           }
         }
       } else {
+        //if not this is not the first appointment and there is no next appointment, this must be the last appointment
         if (selectedAppointment.end?.dateTime && timeSlot.end?.dateTime) {
           const minutes = getMinutesBetween(selectedAppointment.end.dateTime, timeSlot.end.dateTime);
 
           if (minutes > 0) {
             availableTimeToday.push({
-              startTime: selectedAppointment.end.dateTime,
+              startTime: dayjs(selectedAppointment.end.dateTime).add(timeBetweenAppointments, 'minute').format(),
               minutesBetween: minutes,
-              endTime: timeSlot.end.dateTime,
+              endTime: dayjs(timeSlot.end.dateTime).format(),
             });
           }
         }
