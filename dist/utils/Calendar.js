@@ -190,7 +190,7 @@ function makeCalendarEvent(calendarConfig, startDate, endDate, title, descriptio
                     calendar = new api_1.GoogleCalendar(GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID);
                     event = {
                         summary: title,
-                        description: description,
+                        description: description.replace('\\n', '\n'),
                         start: {
                             dateTime: dayjs(startDate).format(),
                         },

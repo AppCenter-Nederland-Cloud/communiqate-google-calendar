@@ -187,7 +187,7 @@ export async function makeCalendarEvent(
 
   const event = {
     summary: title,
-    description: description,
+    description: description.replace('\\n', '\n'),
     start: {
       dateTime: dayjs(startDate).format(),
     },
