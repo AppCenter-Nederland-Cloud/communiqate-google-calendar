@@ -187,7 +187,7 @@ export async function makeCalendarEvent(
 
   const event = {
     summary: title,
-    description: description.replace('\\n', '\n'),
+    description: description.replace(/\\n/g, '\n'),
     start: {
       dateTime: dayjs(startDate).format(),
     },
@@ -282,11 +282,12 @@ function getAvailableTimeForDay(
       if (i === 0) {
         if (timeSlot.start?.dateTime && selectedAppointment.start?.dateTime) {
           const minutes = getMinutesBetween(timeSlot.start.dateTime, selectedAppointment.start.dateTime);
+
           if (minutes > 0) {
             availableTimeToday.push({
               startTime: dayjs(timeSlot.start.dateTime).format(),
               minutesBetween: minutes,
-              endTime: dayjs(selectedAppointment.start.dateTime).add(timeBetweenAppointments, 'minute').format(),
+              endTime: dayjs(selectedAppointment.start.dateTime).add(-timeBetweenAppointments, 'minute').format(),
             });
           }
         }
@@ -304,7 +305,7 @@ function getAvailableTimeForDay(
             availableTimeToday.push({
               startTime: dayjs(selectedAppointment.end.dateTime).add(timeBetweenAppointments, 'minute').format(),
               minutesBetween: minutes - timeBetweenAppointments,
-              endTime: dayjs(nextSelected.start.dateTime).add(timeBetweenAppointments, 'minute').format(),
+              endTime: dayjs(nextSelected.start.dateTime).add(-timeBetweenAppointments, 'minute').format(),
             });
           }
         }

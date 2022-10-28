@@ -190,7 +190,7 @@ function makeCalendarEvent(calendarConfig, startDate, endDate, title, descriptio
                     calendar = new api_1.GoogleCalendar(GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID);
                     event = {
                         summary: title,
-                        description: description.replace('\\n', '\n'),
+                        description: description.replace(/\\n/g, '\n'),
                         start: {
                             dateTime: dayjs(startDate).format(),
                         },
@@ -270,7 +270,7 @@ function getAvailableTimeForDay(appointmentsToday, timeSlot, timeBetweenAppointm
                         availableTimeToday.push({
                             startTime: dayjs(timeSlot.start.dateTime).format(),
                             minutesBetween: minutes,
-                            endTime: dayjs(selectedAppointment.start.dateTime).add(timeBetweenAppointments, 'minute').format(),
+                            endTime: dayjs(selectedAppointment.start.dateTime).add(-timeBetweenAppointments, 'minute').format(),
                         });
                     }
                 }
@@ -286,7 +286,7 @@ function getAvailableTimeForDay(appointmentsToday, timeSlot, timeBetweenAppointm
                         availableTimeToday.push({
                             startTime: dayjs(selectedAppointment.end.dateTime).add(timeBetweenAppointments, 'minute').format(),
                             minutesBetween: minutes - timeBetweenAppointments,
-                            endTime: dayjs(nextSelected.start.dateTime).add(timeBetweenAppointments, 'minute').format(),
+                            endTime: dayjs(nextSelected.start.dateTime).add(-timeBetweenAppointments, 'minute').format(),
                         });
                     }
                 }
