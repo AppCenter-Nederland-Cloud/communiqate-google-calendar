@@ -77,4 +77,11 @@ export class GoogleCalendar {
       ...options,
     });
   }
+
+  public async deleteEvent(eventId: string): Promise<any> {
+    return await this.client.events.delete({
+      calendarId: this.calendarId,
+      eventId: eventId,
+    });
+  }
 }

@@ -1,15 +1,4 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -47,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findDate = exports.getSlotsForDay = exports.sortEventByDay = exports.makeCalendarEvent = exports.getWeekEvents = exports.getAvailableWeeks = exports.checkWeekAvailable = void 0;
+exports.cancelEvent = exports.findDate = exports.getSlotsForDay = exports.sortEventByDay = exports.makeCalendarEvent = exports.getWeekEvents = exports.getAvailableWeeks = exports.checkWeekAvailable = void 0;
 var Functions_1 = require("./Functions");
 var api_1 = require("../api");
 var dayjs = require('dayjs');
@@ -190,28 +179,32 @@ exports.getWeekEvents = getWeekEvents;
 /**
  * Create calendar appointment
  */
-function makeCalendarEvent(calendarConfig, startDate, endDate, title, description, options) {
-    var _a;
+function makeCalendarEvent(calendarConfig, startDate, endDate, title, description) {
     if (description === void 0) { description = ''; }
-    if (options === void 0) { options = {}; }
     return __awaiter(this, void 0, void 0, function () {
         var GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID, calendar, event, calEvent, eventId;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
                 case 0:
                     GOOGLE_CLIENT_EMAIL = calendarConfig.GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY = calendarConfig.GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID = calendarConfig.GOOGLE_CALENDAR_ID;
                     calendar = new api_1.GoogleCalendar(GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID);
-                    event = __assign({ summary: title, description: description.replace(/\\n/g, '\n'), start: {
+                    event = {
+                        summary: title,
+                        description: description.replace(/\\n/g, '\n'),
+                        start: {
                             dateTime: dayjs(startDate).format(),
-                        }, end: {
+                        },
+                        end: {
                             dateTime: dayjs(endDate).format(),
-                        } }, options);
+                        },
+                    };
                     return [4 /*yield*/, calendar.createEvent(event)];
                 case 1:
-                    calEvent = _b.sent();
-                    eventId = (_a = calEvent.data.htmlLink) === null || _a === void 0 ? void 0 : _a.replace('https://www.google.com/calendar/event?eid=', '');
+                    calEvent = _a.sent();
+                    eventId = calEvent.data.id;
                     return [2 /*return*/, {
                             appointmentString: (0, Functions_1.getAppointmentString)(startDate, endDate, 'nl-NL'),
+                            //eventEid,
                             eventId: eventId,
                         }];
             }
@@ -397,3 +390,18 @@ function findDate(weeks, date, timeRange) {
     }
 }
 exports.findDate = findDate;
+function cancelEvent(calendarConfig, eventId) {
+    return __awaiter(this, void 0, void 0, function () {
+        var GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID, calendar;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    GOOGLE_CLIENT_EMAIL = calendarConfig.GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY = calendarConfig.GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID = calendarConfig.GOOGLE_CALENDAR_ID;
+                    calendar = new api_1.GoogleCalendar(GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID);
+                    return [4 /*yield*/, calendar.deleteEvent(eventId)];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
+    });
+}
+exports.cancelEvent = cancelEvent;
