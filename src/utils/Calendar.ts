@@ -180,6 +180,7 @@ export async function makeCalendarEvent(
   endDate: string,
   title: string,
   description = '',
+  options = {},
 ) {
   const { GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID } = calendarConfig;
 
@@ -194,6 +195,7 @@ export async function makeCalendarEvent(
     end: {
       dateTime: dayjs(endDate).format(),
     },
+    ...options,
   };
 
   const calEvent = await calendar.createEvent(event);

@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -179,9 +190,10 @@ exports.getWeekEvents = getWeekEvents;
 /**
  * Create calendar appointment
  */
-function makeCalendarEvent(calendarConfig, startDate, endDate, title, description) {
+function makeCalendarEvent(calendarConfig, startDate, endDate, title, description, options) {
     var _a;
     if (description === void 0) { description = ''; }
+    if (options === void 0) { options = {}; }
     return __awaiter(this, void 0, void 0, function () {
         var GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID, calendar, event, calEvent, eventId;
         return __generator(this, function (_b) {
@@ -189,16 +201,11 @@ function makeCalendarEvent(calendarConfig, startDate, endDate, title, descriptio
                 case 0:
                     GOOGLE_CLIENT_EMAIL = calendarConfig.GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY = calendarConfig.GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID = calendarConfig.GOOGLE_CALENDAR_ID;
                     calendar = new api_1.GoogleCalendar(GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID);
-                    event = {
-                        summary: title,
-                        description: description.replace(/\\n/g, '\n'),
-                        start: {
+                    event = __assign({ summary: title, description: description.replace(/\\n/g, '\n'), start: {
                             dateTime: dayjs(startDate).format(),
-                        },
-                        end: {
+                        }, end: {
                             dateTime: dayjs(endDate).format(),
-                        },
-                    };
+                        } }, options);
                     return [4 /*yield*/, calendar.createEvent(event)];
                 case 1:
                     calEvent = _b.sent();
