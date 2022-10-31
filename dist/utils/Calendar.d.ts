@@ -65,4 +65,11 @@ export declare function findDate(weeks: CalendarWeek[], date: string, timeRange:
     start: any;
     end: any;
 };
+/**
+ * Cancels the given event
+ */
 export declare function cancelEvent(calendarConfig: CalendarConfigProps, eventId: string): Promise<any>;
+/**
+ * Moves the given event to the given dates
+ */
+export declare function moveEvent(calendarConfig: CalendarConfigProps, eventId: string, newStartDate: string, newEndDate: string): Promise<any>;

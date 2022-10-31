@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.cancelEvent = exports.findDate = exports.getSlotsForDay = exports.sortEventByDay = exports.makeCalendarEvent = exports.getWeekEvents = exports.getAvailableWeeks = exports.checkWeekAvailable = void 0;
+exports.moveEvent = exports.cancelEvent = exports.findDate = exports.getSlotsForDay = exports.sortEventByDay = exports.makeCalendarEvent = exports.getWeekEvents = exports.getAvailableWeeks = exports.checkWeekAvailable = void 0;
 var Functions_1 = require("./Functions");
 var api_1 = require("../api");
 var dayjs = require('dayjs');
@@ -390,6 +390,9 @@ function findDate(weeks, date, timeRange) {
     }
 }
 exports.findDate = findDate;
+/**
+ * Cancels the given event
+ */
 function cancelEvent(calendarConfig, eventId) {
     return __awaiter(this, void 0, void 0, function () {
         var GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID, calendar;
@@ -405,3 +408,27 @@ function cancelEvent(calendarConfig, eventId) {
     });
 }
 exports.cancelEvent = cancelEvent;
+/**
+ * Moves the given event to the given dates
+ */
+function moveEvent(calendarConfig, eventId, newStartDate, newEndDate) {
+    return __awaiter(this, void 0, void 0, function () {
+        var GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID, calendar, event, eventData;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    GOOGLE_CLIENT_EMAIL = calendarConfig.GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY = calendarConfig.GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID = calendarConfig.GOOGLE_CALENDAR_ID;
+                    calendar = new api_1.GoogleCalendar(GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID);
+                    return [4 /*yield*/, calendar.getEvent(eventId)];
+                case 1:
+                    event = _a.sent();
+                    eventData = event.data;
+                    eventData.start.dateTime = newStartDate;
+                    eventData.end.dateTime = newEndDate;
+                    return [4 /*yield*/, calendar.updateEvent(eventId, eventData)];
+                case 2: return [2 /*return*/, _a.sent()];
+            }
+        });
+    });
+}
+exports.moveEvent = moveEvent;

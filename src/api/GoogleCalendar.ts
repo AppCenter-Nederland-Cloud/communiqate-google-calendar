@@ -1,6 +1,7 @@
 import { google } from 'googleapis';
 import { APIEndpoint, GaxiosPromise } from 'googleapis-common';
 import { calendar_v3 } from 'googleapis';
+import { calendar } from 'googleapis/build/src/apis/calendar';
 
 /**
  * Google calendar client wrapper
@@ -78,8 +79,36 @@ export class GoogleCalendar {
     });
   }
 
+  /**
+   * Deletes a calendar event
+   * @param eventId
+   */
   public async deleteEvent(eventId: string): Promise<any> {
     return await this.client.events.delete({
+      calendarId: this.calendarId,
+      eventId: eventId,
+    });
+  }
+
+  /**
+   * updates a calendar event
+   * @param eventId
+   * @param event
+   */
+  public async updateEvent(eventId: string, event: calendar_v3.Schema$Event) {
+    return await this.client.events.update({
+      calendarId: this.calendarId,
+      eventId: eventId,
+      requestBody: event,
+    });
+  }
+
+  /**
+   * Retrieves an event
+   * @param eventId
+   */
+  public async getEvent(eventId: string) {
+    return await this.client.events.get({
       calendarId: this.calendarId,
       eventId: eventId,
     });

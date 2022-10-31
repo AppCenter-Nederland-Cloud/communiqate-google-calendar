@@ -99,11 +99,51 @@ var GoogleCalendar = /** @class */ (function () {
             });
         });
     };
+    /**
+     * Deletes a calendar event
+     * @param eventId
+     */
     GoogleCalendar.prototype.deleteEvent = function (eventId) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.client.events.delete({
+                            calendarId: this.calendarId,
+                            eventId: eventId,
+                        })];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    /**
+     * updates a calendar event
+     * @param eventId
+     * @param event
+     */
+    GoogleCalendar.prototype.updateEvent = function (eventId, event) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.client.events.update({
+                            calendarId: this.calendarId,
+                            eventId: eventId,
+                            requestBody: event,
+                        })];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    /**
+     * Retrieves an event
+     * @param eventId
+     */
+    GoogleCalendar.prototype.getEvent = function (eventId) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.client.events.get({
                             calendarId: this.calendarId,
                             eventId: eventId,
                         })];

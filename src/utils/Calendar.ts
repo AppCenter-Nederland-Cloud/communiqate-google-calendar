@@ -180,7 +180,6 @@ export async function makeCalendarEvent(
   endDate: string,
   title: string,
   description = '',
-  options = {},
 ) {
   const { GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID } = calendarConfig;
 
@@ -195,15 +194,16 @@ export async function makeCalendarEvent(
     end: {
       dateTime: dayjs(endDate).format(),
     },
-    ...options,
   };
 
   const calEvent = await calendar.createEvent(event);
 
-  const eventId = calEvent.data.htmlLink?.replace('https://www.google.com/calendar/event?eid=', '');
+  //const eventEId = calEvent.data.htmlLink?.replace('https://www.google.com/calendar/event?eid=', '');
+  const eventId = calEvent.data.id;
 
   return {
     appointmentString: getAppointmentString(startDate, endDate, 'nl-NL'),
+    //eventEid,
     eventId,
   };
 }
@@ -435,4 +435,38 @@ export function findDate(weeks: CalendarWeek[], date: string, timeRange: string)
       end: 'not_found',
     };
   }
+}
+
+/**
+ * Cancels the given event
+ */
+export async function cancelEvent(calendarConfig: CalendarConfigProps, eventId: string) {
+  const { GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID } = calendarConfig;
+
+  const calendar = new GoogleCalendar(GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID);
+
+  return await calendar.deleteEvent(eventId);
+}
+
+/**
+ * Moves the given event to the given dates
+ */
+export async function moveEvent(
+  calendarConfig: CalendarConfigProps,
+  eventId: string,
+  newStartDate: string,
+  newEndDate: string,
+) {
+  const { GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID } = calendarConfig;
+
+  const calendar = new GoogleCalendar(GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID);
+
+  const event = await calendar.getEvent(eventId);
+
+  let eventData = event.data;
+
+  eventData.start.dateTime = newStartDate;
+  eventData.end.dateTime = newEndDate;
+
+  return await calendar.updateEvent(eventId, eventData);
 }

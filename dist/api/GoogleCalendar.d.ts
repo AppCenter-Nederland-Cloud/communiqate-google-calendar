@@ -32,5 +32,20 @@ export declare class GoogleCalendar {
      * @param options
      */
     createEvent(event: calendar_v3.Schema$Event, options?: calendar_v3.Params$Resource$Events$Insert): Promise<GaxiosPromise<calendar_v3.Schema$Event>>;
+    /**
+     * Deletes a calendar event
+     * @param eventId
+     */
     deleteEvent(eventId: string): Promise<any>;
+    /**
+     * updates a calendar event
+     * @param eventId
+     * @param event
+     */
+    updateEvent(eventId: string, event: calendar_v3.Schema$Event): Promise<any>;
+    /**
+     * Retrieves an event
+     * @param eventId
+     */
+    getEvent(eventId: string): Promise<any>;
 }
