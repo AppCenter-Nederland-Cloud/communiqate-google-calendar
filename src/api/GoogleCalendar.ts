@@ -17,7 +17,6 @@ export class GoogleCalendar {
   public calendarId?: string;
 
   /**
-   *
    * @param googleClientEmail
    * @param googlePrivateKey
    * @param calendarId

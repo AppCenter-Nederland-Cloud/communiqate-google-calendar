@@ -198,7 +198,12 @@ export async function makeCalendarEvent(
 
   const calEvent = await calendar.createEvent(event);
 
-  return getAppointmentString(startDate, endDate, 'nl-NL');
+  const eventId = calEvent.data.htmlLink?.replace('https://www.google.com/calendar/event?eid=', '');
+
+  return {
+    appointmentString: getAppointmentString(startDate, endDate, 'nl-NL'),
+    eventId,
+  };
 }
 
 /**

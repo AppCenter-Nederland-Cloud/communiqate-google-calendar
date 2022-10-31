@@ -46,7 +46,10 @@ export declare function getWeekEvents(calendarConfig: CalendarConfigProps, weekN
 /**
  * Create calendar appointment
  */
-export declare function makeCalendarEvent(calendarConfig: CalendarConfigProps, startDate: string, endDate: string, title: string, description?: string): Promise<string>;
+export declare function makeCalendarEvent(calendarConfig: CalendarConfigProps, startDate: string, endDate: string, title: string, description?: string): Promise<{
+    appointmentString: string;
+    eventId: string | undefined;
+}>;
 /**
  * sort the event into a day object.
  */

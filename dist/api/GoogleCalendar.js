@@ -54,7 +54,6 @@ var googleapis_1 = require("googleapis");
  */
 var GoogleCalendar = /** @class */ (function () {
     /**
-     *
      * @param googleClientEmail
      * @param googlePrivateKey
      * @param calendarId

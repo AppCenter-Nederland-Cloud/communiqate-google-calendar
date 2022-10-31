@@ -180,11 +180,12 @@ exports.getWeekEvents = getWeekEvents;
  * Create calendar appointment
  */
 function makeCalendarEvent(calendarConfig, startDate, endDate, title, description) {
+    var _a;
     if (description === void 0) { description = ''; }
     return __awaiter(this, void 0, void 0, function () {
-        var GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID, calendar, event, calEvent;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID, calendar, event, calEvent, eventId;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
                     GOOGLE_CLIENT_EMAIL = calendarConfig.GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY = calendarConfig.GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID = calendarConfig.GOOGLE_CALENDAR_ID;
                     calendar = new api_1.GoogleCalendar(GOOGLE_CLIENT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_CALENDAR_ID);
@@ -200,8 +201,12 @@ function makeCalendarEvent(calendarConfig, startDate, endDate, title, descriptio
                     };
                     return [4 /*yield*/, calendar.createEvent(event)];
                 case 1:
-                    calEvent = _a.sent();
-                    return [2 /*return*/, (0, Functions_1.getAppointmentString)(startDate, endDate, 'nl-NL')];
+                    calEvent = _b.sent();
+                    eventId = (_a = calEvent.data.htmlLink) === null || _a === void 0 ? void 0 : _a.replace('https://www.google.com/calendar/event?eid=', '');
+                    return [2 /*return*/, {
+                            appointmentString: (0, Functions_1.getAppointmentString)(startDate, endDate, 'nl-NL'),
+                            eventId: eventId,
+                        }];
             }
         });
     });

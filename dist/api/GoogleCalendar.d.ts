@@ -13,7 +13,6 @@ export declare class GoogleCalendar {
      */
     calendarId?: string;
     /**
-     *
      * @param googleClientEmail
      * @param googlePrivateKey
      * @param calendarId
