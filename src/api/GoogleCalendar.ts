@@ -1,7 +1,6 @@
 import { google } from 'googleapis';
 import { APIEndpoint, GaxiosPromise } from 'googleapis-common';
 import { calendar_v3 } from 'googleapis';
-import { calendar } from 'googleapis/build/src/apis/calendar';
 
 /**
  * Google calendar client wrapper

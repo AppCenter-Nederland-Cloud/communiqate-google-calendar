@@ -4,8 +4,9 @@ import { getAppointmentString, getMinutesBetween, getWeekString } from './Functi
 import { GoogleCalendar } from '../api';
 import Schema$EventDateTime = calendar_v3.Schema$EventDateTime;
 
-const dayjs = require('dayjs');
-const isoWeek = require('dayjs/plugin/isoWeek');
+import * as dayjs from 'dayjs';
+import * as isoWeek from 'dayjs/plugin/isoWeek';
+
 dayjs.extend(isoWeek);
 
 export interface CalendarConfigProps {

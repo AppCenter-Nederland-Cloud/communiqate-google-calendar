@@ -39,8 +39,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.moveEvent = exports.cancelEvent = exports.findDate = exports.getSlotsForDay = exports.sortEventByDay = exports.makeCalendarEvent = exports.getWeekEvents = exports.getAvailableWeeks = exports.checkWeekAvailable = void 0;
 var Functions_1 = require("./Functions");
 var api_1 = require("../api");
-var dayjs = require('dayjs');
-var isoWeek = require('dayjs/plugin/isoWeek');
+var dayjs = require("dayjs");
+var isoWeek = require("dayjs/plugin/isoWeek");
 dayjs.extend(isoWeek);
 /**
  * Check if the week is available
