@@ -1,6 +1,6 @@
 import { calendar_v3 } from 'googleapis';
 
-import { getAppointmentString, getMinutesBetween, getWeekString } from './Functions';
+import { appointmentStringToDate, getAppointmentString, getMinutesBetween, getWeekString } from './Functions';
 import { GoogleCalendar } from '../api';
 import Schema$EventDateTime = calendar_v3.Schema$EventDateTime;
 
@@ -463,4 +463,15 @@ export async function moveEvent(
   eventData.end.dateTime = newEndDate;
 
   return await calendar.updateEvent(eventId, eventData);
+}
+
+/**
+ * Check if the given appointment is before the current date, if so return true else return fase
+ */
+export function appointmentHasPassed(appointmentString: string) {
+  const appointmentDate = appointmentStringToDate(appointmentString);
+
+  const currentDate = new Date();
+
+  return currentDate > appointmentDate;
 }

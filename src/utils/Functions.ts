@@ -61,3 +61,7 @@ export function getWeekString(startDate: string, endDate: string, locale = 'nl-N
 export function getMinutesBetween(first: string, second: string) {
   return dayjs(second).diff(first, 'minute');
 }
+
+export function appointmentStringToDate(appointmentString: string) {
+  return new Date(appointmentString.replace('om ', ''));
+}

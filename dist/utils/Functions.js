@@ -11,7 +11,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getMinutesBetween = exports.getWeekString = exports.getTimeRange = exports.getAppointmentString = exports.getDateString = exports.dateString = void 0;
+exports.appointmentStringToDate = exports.getMinutesBetween = exports.getWeekString = exports.getTimeRange = exports.getAppointmentString = exports.getDateString = exports.dateString = void 0;
 var dayjs = require("dayjs");
 /**
  * Gets the date string as specified in the options
@@ -79,3 +79,7 @@ function getMinutesBetween(first, second) {
     return dayjs(second).diff(first, 'minute');
 }
 exports.getMinutesBetween = getMinutesBetween;
+function appointmentStringToDate(appointmentString) {
+    return new Date(appointmentString.replace('om ', ''));
+}
+exports.appointmentStringToDate = appointmentStringToDate;
