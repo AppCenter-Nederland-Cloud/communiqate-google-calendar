@@ -1,6 +1,6 @@
 import { calendar_v3 } from 'googleapis';
 
-import { getAppointmentString, getWeekString } from './Functions';
+import { getAppointmentString, getMinutesBetween, getWeekString } from './Functions';
 import { GoogleCalendar } from '../api';
 import Schema$EventDateTime = calendar_v3.Schema$EventDateTime;
 
@@ -39,13 +39,6 @@ export interface CalendarWeek {
   end: string;
   week: number;
   days: CalendarDay[];
-}
-
-/**
- * Get the minutes between 2 date strings
- */
-function getMinutesBetween(first: string, second: string) {
-  return dayjs(second).diff(first, 'minute');
 }
 
 /**

@@ -43,12 +43,6 @@ var dayjs = require('dayjs');
 var isoWeek = require('dayjs/plugin/isoWeek');
 dayjs.extend(isoWeek);
 /**
- * Get the minutes between 2 date strings
- */
-function getMinutesBetween(first, second) {
-    return dayjs(second).diff(first, 'minute');
-}
-/**
  * Check if the week is available
  * @param weekData
  */
@@ -270,7 +264,7 @@ function getAvailableTimeForDay(appointmentsToday, timeSlot, timeBetweenAppointm
             //if appointment is first appointment of the day
             if (i === 0) {
                 if (((_a = timeSlot.start) === null || _a === void 0 ? void 0 : _a.dateTime) && ((_b = selectedAppointment.start) === null || _b === void 0 ? void 0 : _b.dateTime)) {
-                    var minutes = getMinutesBetween(timeSlot.start.dateTime, selectedAppointment.start.dateTime);
+                    var minutes = (0, Functions_1.getMinutesBetween)(timeSlot.start.dateTime, selectedAppointment.start.dateTime);
                     if (minutes > 0) {
                         availableTimeToday.push({
                             startTime: dayjs(timeSlot.start.dateTime).format(),
@@ -286,7 +280,7 @@ function getAvailableTimeForDay(appointmentsToday, timeSlot, timeBetweenAppointm
             }
             if (nextSelected) {
                 if (((_c = nextSelected.start) === null || _c === void 0 ? void 0 : _c.dateTime) && ((_d = selectedAppointment.end) === null || _d === void 0 ? void 0 : _d.dateTime)) {
-                    var minutes = getMinutesBetween(selectedAppointment.end.dateTime, nextSelected.start.dateTime);
+                    var minutes = (0, Functions_1.getMinutesBetween)(selectedAppointment.end.dateTime, nextSelected.start.dateTime);
                     if (minutes > 0) {
                         availableTimeToday.push({
                             startTime: dayjs(selectedAppointment.end.dateTime).add(timeBetweenAppointments, 'minute').format(),
@@ -299,7 +293,7 @@ function getAvailableTimeForDay(appointmentsToday, timeSlot, timeBetweenAppointm
             else {
                 //if not this is not the first appointment and there is no next appointment, this must be the last appointment
                 if (((_e = selectedAppointment.end) === null || _e === void 0 ? void 0 : _e.dateTime) && ((_f = timeSlot.end) === null || _f === void 0 ? void 0 : _f.dateTime)) {
-                    var minutes = getMinutesBetween(selectedAppointment.end.dateTime, timeSlot.end.dateTime);
+                    var minutes = (0, Functions_1.getMinutesBetween)(selectedAppointment.end.dateTime, timeSlot.end.dateTime);
                     if (minutes > 0) {
                         availableTimeToday.push({
                             startTime: dayjs(selectedAppointment.end.dateTime).add(timeBetweenAppointments, 'minute').format(),
@@ -313,7 +307,7 @@ function getAvailableTimeForDay(appointmentsToday, timeSlot, timeBetweenAppointm
     }
     else {
         if (((_g = timeSlot.start) === null || _g === void 0 ? void 0 : _g.dateTime) && ((_h = timeSlot.end) === null || _h === void 0 ? void 0 : _h.dateTime)) {
-            var minutes = getMinutesBetween(timeSlot.start.dateTime, timeSlot.end.dateTime);
+            var minutes = (0, Functions_1.getMinutesBetween)(timeSlot.start.dateTime, timeSlot.end.dateTime);
             availableTimeToday.push({
                 startTime: timeSlot.start.dateTime,
                 getMinutesBetween: minutes,

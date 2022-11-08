@@ -22,3 +22,7 @@ export declare function getTimeRange(startDate: string, endDate: string): string
  * @param timeZone
  */
 export declare function getWeekString(startDate: string, endDate: string, locale?: string, timeZone?: string): string;
+/**
+ * Get the minutes between 2 date strings
+ */
+export declare function getMinutesBetween(first: string, second: string): number;

@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 /**
  * Gets the date string as specified in the options
  */
@@ -51,4 +53,11 @@ export function getTimeRange(startDate: string, endDate: string) {
  */
 export function getWeekString(startDate: string, endDate: string, locale = 'nl-NL', timeZone = 'Europe/amsterdam') {
   return `${getDateString(startDate, locale, timeZone)} - ${getDateString(endDate, locale, timeZone)}`;
+}
+
+/**
+ * Get the minutes between 2 date strings
+ */
+export function getMinutesBetween(first: string, second: string) {
+  return dayjs(second).diff(first, 'minute');
 }

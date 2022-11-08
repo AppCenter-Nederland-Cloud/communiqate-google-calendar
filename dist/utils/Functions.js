@@ -11,7 +11,8 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getWeekString = exports.getTimeRange = exports.getAppointmentString = exports.getDateString = exports.dateString = void 0;
+exports.getMinutesBetween = exports.getWeekString = exports.getTimeRange = exports.getAppointmentString = exports.getDateString = exports.dateString = void 0;
+var dayjs_1 = require("dayjs");
 /**
  * Gets the date string as specified in the options
  */
@@ -71,3 +72,10 @@ function getWeekString(startDate, endDate, locale, timeZone) {
     return "".concat(getDateString(startDate, locale, timeZone), " - ").concat(getDateString(endDate, locale, timeZone));
 }
 exports.getWeekString = getWeekString;
+/**
+ * Get the minutes between 2 date strings
+ */
+function getMinutesBetween(first, second) {
+    return (0, dayjs_1.default)(second).diff(first, 'minute');
+}
+exports.getMinutesBetween = getMinutesBetween;

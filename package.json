@@ -15,12 +15,13 @@
   "description": "",
   "devDependencies": {
     "@types/node": "^18.11.0",
-    "typescript": "^4.8.4",
-    "prettier": "^2.7.1"
+    "prettier": "^2.7.1",
+    "typescript": "^4.8.4"
   },
   "dependencies": {
+    "@acn-cloud/communiqate-api-js": "^0.6.0",
     "axios": "^1.1.3",
-    "dayjs": "^1.11.5",
+    "dayjs": "^1.11.6",
     "googleapis": "^108.0.0"
   }
 }

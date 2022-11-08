@@ -17,3 +17,4 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./Calendar"), exports);
 __exportStar(require("./Functions"), exports);
 __exportStar(require("./MessageBird"), exports);
+__exportStar(require("./Communiqate"), exports);
