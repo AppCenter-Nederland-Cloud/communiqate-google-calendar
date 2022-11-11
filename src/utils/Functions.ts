@@ -84,14 +84,12 @@ export function appointmentHasPassed(appointmentString: string) {
   });
 
   //date of the appointment (Amsterdam Timezone) [String]
-  const appointmentDate = dateString(validAppointmentString, 'nl-NL', 'Europe/Amsterdam', {
-    dateStyle: 'short',
-    timeStyle: 'short',
-  });
+  //is Amsterdam, should be Amsterdam
+  const appointmentDate = new Date(validAppointmentString);
 
   return {
     currentDate: currentDate,
     appointmentDate: appointmentDate,
-    hasPassed: new Date(currentDate) > new Date(appointmentDate),
+    hasPassed: new Date(currentDate).getTime() > new Date(validAppointmentString).getTime(),
   };
 }

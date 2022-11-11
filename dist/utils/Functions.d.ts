@@ -32,6 +32,6 @@ export declare function appointmentStringToDate(appointmentString: string): Date
  */
 export declare function appointmentHasPassed(appointmentString: string): {
     currentDate: string;
-    appointmentDate: string;
+    appointmentDate: Date;
     hasPassed: boolean;
 };
