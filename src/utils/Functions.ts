@@ -70,13 +70,23 @@ export function appointmentStringToDate(appointmentString: string) {
  * Check if the given appointment is before the current date, if so return true else return fase
  */
 export function appointmentHasPassed(appointmentString: string) {
-  const appointmentDate = appointmentStringToDate(appointmentString + ' UTC');
+  const validAppointmentString = appointmentString.replace('om ', '');
 
-  const currentDate = new Date(new Date().toUTCString());
+  //current date (now, Amsterdam Timezone) [String]
+  const currentDate = dateString(new Date().toISOString(), 'nl-NL', 'Europe/Amsterdam', {
+    dateStyle: 'short',
+    timeStyle: 'short',
+  });
+
+  //date of the appointment (Amsterdam Timezone) [String]
+  const appointmentDate = dateString(validAppointmentString, 'nl-NL', 'Europe/Amsterdam', {
+    dateStyle: 'short',
+    timeStyle: 'short',
+  });
 
   return {
     currentDate: currentDate,
     appointmentDate: appointmentDate,
-    hasPassed: currentDate > appointmentDate,
+    hasPassed: new Date(currentDate) > new Date(appointmentDate),
   };
 }

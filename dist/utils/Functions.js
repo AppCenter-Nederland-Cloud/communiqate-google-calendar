@@ -11,7 +11,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.appointmentStringToDate = exports.getMinutesBetween = exports.getWeekString = exports.getTimeRange = exports.getAppointmentString = exports.getDateString = exports.dateString = void 0;
+exports.appointmentHasPassed = exports.appointmentStringToDate = exports.getMinutesBetween = exports.getWeekString = exports.getTimeRange = exports.getAppointmentString = exports.getDateString = exports.dateString = void 0;
 var dayjs = require("dayjs");
 /**
  * Gets the date string as specified in the options
@@ -83,3 +83,25 @@ function appointmentStringToDate(appointmentString) {
     return new Date(appointmentString.replace('om ', ''));
 }
 exports.appointmentStringToDate = appointmentStringToDate;
+/**
+ * Check if the given appointment is before the current date, if so return true else return fase
+ */
+function appointmentHasPassed(appointmentString) {
+    var validAppointmentString = appointmentString.replace('om ', '');
+    //current date (now, Amsterdam Timezone) [String]
+    var currentDate = dateString(new Date().toISOString(), 'nl-NL', 'Europe/Amsterdam', {
+        dateStyle: 'short',
+        timeStyle: 'short',
+    });
+    //date of the appointment (Amsterdam Timezone) [String]
+    var appointmentDate = dateString(validAppointmentString, 'nl-NL', 'Europe/Amsterdam', {
+        dateStyle: 'short',
+        timeStyle: 'short',
+    });
+    return {
+        currentDate: currentDate,
+        appointmentDate: appointmentDate,
+        hasPassed: new Date(currentDate) > new Date(appointmentDate),
+    };
+}
+exports.appointmentHasPassed = appointmentHasPassed;
