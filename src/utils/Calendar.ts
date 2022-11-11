@@ -464,14 +464,3 @@ export async function moveEvent(
 
   return await calendar.updateEvent(eventId, eventData);
 }
-
-/**
- * Check if the given appointment is before the current date, if so return true else return fase
- */
-export function appointmentHasPassed(appointmentString: string) {
-  const appointmentDate = appointmentStringToDate(appointmentString);
-
-  const currentDate = new Date();
-
-  return currentDate > appointmentDate;
-}

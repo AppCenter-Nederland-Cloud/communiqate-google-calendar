@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.appointmentHasPassed = exports.moveEvent = exports.cancelEvent = exports.findDate = exports.getSlotsForDay = exports.sortEventByDay = exports.makeCalendarEvent = exports.getWeekEvents = exports.getAvailableWeeks = exports.checkWeekAvailable = void 0;
+exports.moveEvent = exports.cancelEvent = exports.findDate = exports.getSlotsForDay = exports.sortEventByDay = exports.makeCalendarEvent = exports.getWeekEvents = exports.getAvailableWeeks = exports.checkWeekAvailable = void 0;
 var Functions_1 = require("./Functions");
 var api_1 = require("../api");
 var dayjs = require("dayjs");
@@ -426,12 +426,3 @@ function moveEvent(calendarConfig, eventId, newStartDate, newEndDate) {
     });
 }
 exports.moveEvent = moveEvent;
-/**
- * Check if the given appointment is before the current date, if so return true else return fase
- */
-function appointmentHasPassed(appointmentString) {
-    var appointmentDate = (0, Functions_1.appointmentStringToDate)(appointmentString);
-    var currentDate = new Date();
-    return currentDate > appointmentDate;
-}
-exports.appointmentHasPassed = appointmentHasPassed;

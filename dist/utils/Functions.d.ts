@@ -26,3 +26,12 @@ export declare function getWeekString(startDate: string, endDate: string, locale
  * Get the minutes between 2 date strings
  */
 export declare function getMinutesBetween(first: string, second: string): number;
+export declare function appointmentStringToDate(appointmentString: string): Date;
+/**
+ * Check if the given appointment is before the current date, if so return true else return fase
+ */
+export declare function appointmentHasPassed(appointmentString: string): {
+    currentDate: Date;
+    appointmentDate: Date;
+    hasPassed: boolean;
+};

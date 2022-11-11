@@ -65,3 +65,18 @@ export function getMinutesBetween(first: string, second: string) {
 export function appointmentStringToDate(appointmentString: string) {
   return new Date(appointmentString.replace('om ', ''));
 }
+
+/**
+ * Check if the given appointment is before the current date, if so return true else return fase
+ */
+export function appointmentHasPassed(appointmentString: string) {
+  const appointmentDate = appointmentStringToDate(appointmentString + ' UTC');
+
+  const currentDate = new Date(new Date().toUTCString());
+
+  return {
+    currentDate: currentDate,
+    appointmentDate: appointmentDate,
+    hasPassed: currentDate > appointmentDate,
+  };
+}
