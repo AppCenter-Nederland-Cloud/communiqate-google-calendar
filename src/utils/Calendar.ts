@@ -1,6 +1,6 @@
 import { calendar_v3 } from 'googleapis';
 
-import { appointmentStringToDate, getAppointmentString, getMinutesBetween, getWeekString } from './Functions';
+import { getAppointmentString, getMinutesBetween, getWeekString } from './Functions';
 import { GoogleCalendar } from '../api';
 import Schema$EventDateTime = calendar_v3.Schema$EventDateTime;
 
@@ -70,17 +70,15 @@ export async function getAvailableWeeks(
   timeBetweenAppointments: number,
   timeInAdvance: number,
 ) {
-  const currentWeek = dayjs().isoWeek();
   let weekIndex = 0;
   const availableWeeks: CalendarWeek[] = [];
 
   while (availableWeeks.length < 8) {
-    const weekNum = dayjs()
-      .isoWeek(currentWeek + weekIndex)
-      .startOf('isoWeek')
-      .isoWeek();
+    console.log(weekIndex);
 
-    const weekEvents = await getWeekEvents(config, weekNum);
+    //if the calculated week number is greater then 52, set it to the next year, week 1
+
+    const weekEvents = await getWeekEvents(config, weekIndex);
 
     if (weekEvents) {
       //checkWeekAvailable
@@ -90,14 +88,14 @@ export async function getAvailableWeeks(
 
       if (available) {
         //this week is available
-        const startOfWeek = dayjs().isoWeek(weekNum).startOf('isoWeek').format();
-        const endOfWeek = dayjs().isoWeek(weekNum).endOf('isoWeek').format();
+        const startOfWeek = dayjs().add(weekIndex, 'week').startOf('isoWeek').format();
+        const endOfWeek = dayjs().add(weekIndex, 'week').endOf('isoWeek').format();
 
         availableWeeks.push({
           weekString: getWeekString(startOfWeek, endOfWeek),
           start: startOfWeek,
           end: endOfWeek,
-          week: weekNum,
+          week: dayjs(startOfWeek).isoWeek(),
           days: weekAsDay,
         });
       }
@@ -118,8 +116,8 @@ async function getSortedEvents(
 ): Promise<any[]> {
   const newEvents: GoogleCalendarEvent[] | [] = passedDownEvents ? passedDownEvents : [];
 
-  const timeMin = dayjs().isoWeek(weekNumber).startOf('week').format();
-  const timeMax = dayjs().isoWeek(weekNumber).endOf('week').format();
+  const timeMin = dayjs().add(weekNumber, 'week').startOf('week').format();
+  const timeMax = dayjs().add(weekNumber, 'week').endOf('week').format();
 
   let nextPageToken = null;
 

@@ -64,7 +64,7 @@ exports.checkWeekAvailable = checkWeekAvailable;
  */
 function getAvailableWeeks(config, appointmentDuration, timeBetweenAppointments, timeInAdvance) {
     return __awaiter(this, void 0, void 0, function () {
-        var currentWeek, weekIndex, availableWeeks, weekNum, weekEvents, weekAsDay, available, startOfWeek, endOfWeek;
+        var currentWeek, weekIndex, availableWeeks, weekEvents, weekAsDay, available, startOfWeek, endOfWeek;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -74,24 +74,21 @@ function getAvailableWeeks(config, appointmentDuration, timeBetweenAppointments,
                     _a.label = 1;
                 case 1:
                     if (!(availableWeeks.length < 8)) return [3 /*break*/, 3];
-                    weekNum = dayjs()
-                        .isoWeek(currentWeek + weekIndex)
-                        .startOf('isoWeek')
-                        .isoWeek();
-                    return [4 /*yield*/, getWeekEvents(config, weekNum)];
+                    console.log(weekIndex);
+                    return [4 /*yield*/, getWeekEvents(config, weekIndex)];
                 case 2:
                     weekEvents = _a.sent();
                     if (weekEvents) {
                         weekAsDay = sortEventByDay(weekEvents, appointmentDuration, timeBetweenAppointments, timeInAdvance);
                         available = checkWeekAvailable(weekAsDay);
                         if (available) {
-                            startOfWeek = dayjs().isoWeek(weekNum).startOf('isoWeek').format();
-                            endOfWeek = dayjs().isoWeek(weekNum).endOf('isoWeek').format();
+                            startOfWeek = dayjs().add(weekIndex, 'week').startOf('isoWeek').format();
+                            endOfWeek = dayjs().add(weekIndex, 'week').endOf('isoWeek').format();
                             availableWeeks.push({
                                 weekString: (0, Functions_1.getWeekString)(startOfWeek, endOfWeek),
                                 start: startOfWeek,
                                 end: endOfWeek,
-                                week: weekNum,
+                                week: dayjs(startOfWeek).isoWeek(),
                                 days: weekAsDay,
                             });
                         }
@@ -117,8 +114,8 @@ function getSortedEvents(calendar, weekNumber, passedDownEvents, pageToken) {
             switch (_a.label) {
                 case 0:
                     newEvents = passedDownEvents ? passedDownEvents : [];
-                    timeMin = dayjs().isoWeek(weekNumber).startOf('week').format();
-                    timeMax = dayjs().isoWeek(weekNumber).endOf('week').format();
+                    timeMin = dayjs().add(weekNumber, 'week').startOf('week').format();
+                    timeMax = dayjs().add(weekNumber, 'week').endOf('week').format();
                     nextPageToken = null;
                     return [4 /*yield*/, calendar.getEvents(timeMin, timeMax, 'UTC', {
                             maxResults: 25,
