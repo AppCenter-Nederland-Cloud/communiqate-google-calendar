@@ -1,7 +1,7 @@
 /**
  * Gets the date string as specified in the options
  */
-export declare function dateString(date: string, locale?: string, timeZone?: string, options?: any): string;
+export declare function dateString(date: string | Date, locale?: string, timeZone?: string, options?: any): string;
 /**
  * Gets the date string as example: "10 oktober 2022
  */

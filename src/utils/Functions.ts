@@ -3,7 +3,12 @@ import * as dayjs from 'dayjs';
 /**
  * Gets the date string as specified in the options
  */
-export function dateString(date: string, locale = 'nl-NL', timeZone = 'Europe/Amsterdam', options: any = undefined) {
+export function dateString(
+  date: string | Date,
+  locale = 'nl-NL',
+  timeZone = 'Europe/Amsterdam',
+  options: any = undefined,
+) {
   return new Intl.DateTimeFormat(locale, {
     ...options,
     timeZone: timeZone,
@@ -73,7 +78,7 @@ export function appointmentHasPassed(appointmentString: string) {
   const validAppointmentString = appointmentString.replace('om ', '');
 
   //current date (now, Amsterdam Timezone) [String]
-  const currentDate = dateString(new Date().toISOString(), 'nl-NL', 'Europe/Amsterdam', {
+  const currentDate = dateString(new Date(), 'nl-NL', 'Europe/Amsterdam', {
     dateStyle: 'short',
     timeStyle: 'short',
   });

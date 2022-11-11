@@ -89,7 +89,7 @@ exports.appointmentStringToDate = appointmentStringToDate;
 function appointmentHasPassed(appointmentString) {
     var validAppointmentString = appointmentString.replace('om ', '');
     //current date (now, Amsterdam Timezone) [String]
-    var currentDate = dateString(new Date().toISOString(), 'nl-NL', 'Europe/Amsterdam', {
+    var currentDate = dateString(new Date(), 'nl-NL', 'Europe/Amsterdam', {
         dateStyle: 'short',
         timeStyle: 'short',
     });
