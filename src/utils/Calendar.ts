@@ -74,7 +74,9 @@ export async function getAvailableWeeks(
   const availableWeeks: CalendarWeek[] = [];
 
   while (availableWeeks.length < 8) {
-    console.log(weekIndex);
+    if (weekIndex >= 52) {
+      break;
+    }
 
     //if the calculated week number is greater then 52, set it to the next year, week 1
 

@@ -64,17 +64,18 @@ exports.checkWeekAvailable = checkWeekAvailable;
  */
 function getAvailableWeeks(config, appointmentDuration, timeBetweenAppointments, timeInAdvance) {
     return __awaiter(this, void 0, void 0, function () {
-        var currentWeek, weekIndex, availableWeeks, weekEvents, weekAsDay, available, startOfWeek, endOfWeek;
+        var weekIndex, availableWeeks, weekEvents, weekAsDay, available, startOfWeek, endOfWeek;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    currentWeek = dayjs().isoWeek();
                     weekIndex = 0;
                     availableWeeks = [];
                     _a.label = 1;
                 case 1:
                     if (!(availableWeeks.length < 8)) return [3 /*break*/, 3];
-                    console.log(weekIndex);
+                    if (weekIndex >= 52) {
+                        return [3 /*break*/, 3];
+                    }
                     return [4 /*yield*/, getWeekEvents(config, weekIndex)];
                 case 2:
                     weekEvents = _a.sent();
