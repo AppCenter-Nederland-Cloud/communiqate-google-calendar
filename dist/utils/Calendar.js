@@ -283,7 +283,7 @@ function getAvailableTimeForDay(appointmentsToday, timeSlot, timeBetweenAppointm
                         availableTimeToday.push({
                             startTime: dayjs(selectedAppointment.end.dateTime).add(timeBetweenAppointments, 'minute').format(),
                             minutesBetween: minutes - timeBetweenAppointments,
-                            endTime: dayjs(nextSelected.start.dateTime).add(-timeBetweenAppointments, 'minute').format(),
+                            endTime: dayjs(nextSelected.start.dateTime).format(),
                         });
                     }
                 }
