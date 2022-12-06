@@ -60,7 +60,7 @@ export async function sendDaysMessage(config: MessageBirdConfig, days: CalendarD
 
   days.forEach((day) => {
     if (day.slots.length > 0) {
-      if (rows.length < 9) {
+      if (rows.length < 10) {
         rows.push({
           id: day.start,
           title: dateString(day.start, 'nl-NL', 'Europe/Amsterdam', { dateStyle: 'short' }), //parse,
@@ -68,12 +68,6 @@ export async function sendDaysMessage(config: MessageBirdConfig, days: CalendarD
         });
       }
     }
-  });
-
-  rows.push({
-    id: 'anders',
-    title: 'Andere week kiezen',
-    description: 'Kies deze optie wanneer je een moment wil kiezen in een andere week.',
   });
 
   await MessageBirdMessages.post('/messages', {
@@ -107,7 +101,7 @@ export async function sendAppointmentMessage(
 ) {
   const { conversationId, apiKey } = config;
 
-  const rows = [];
+  const rows: any[] = [];
 
   const MessageBirdMessages = axios.create({
     baseURL: `${url}/${conversationId}`,
@@ -121,19 +115,13 @@ export async function sendAppointmentMessage(
       timeStyle: 'short',
     })} - ${dateString(appointment.end, 'nl-NL', 'Europe/Amsterdam', { timeStyle: 'short' })}`;
 
-    if (rows.length < 9) {
+    if (rows.length < 10) {
       rows.push({
         id: appointment.start,
         title: title,
         description: getAppointmentString(appointment.start, appointment.end),
       });
     }
-  });
-
-  rows.push({
-    id: 'anders',
-    title: 'Andere dag kiezen',
-    description: 'Kies deze optie wanneer je een moment wil kiezen op een andere dag.',
   });
 
   return await MessageBirdMessages.post('/messages', {
@@ -158,7 +146,7 @@ export async function sendAppointmentMessage(
   });
 }
 
-export async function sendSuggestionsMessage(config: MessageBirdConfig, weeks: any[]) {
+export async function sendSuggestionsMessage(config: MessageBirdConfig, weeks: any[], sendMessage = true) {
   const { conversationId, apiKey } = config;
 
   const MessageBirdMessages = axios.create({
@@ -221,6 +209,10 @@ export async function sendSuggestionsMessage(config: MessageBirdConfig, weeks: a
         description: slots[i].parsedString,
       });
     }
+  }
+
+  if (!sendMessage) {
+    return slots;
   }
 
   await MessageBirdMessages.post('/messages', {

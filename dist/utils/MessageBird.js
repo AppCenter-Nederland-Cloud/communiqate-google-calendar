@@ -97,7 +97,7 @@ function sendDaysMessage(config, days, weekNumber) {
                     rows = [];
                     days.forEach(function (day) {
                         if (day.slots.length > 0) {
-                            if (rows.length < 9) {
+                            if (rows.length < 10) {
                                 rows.push({
                                     id: day.start,
                                     title: (0, Functions_1.dateString)(day.start, 'nl-NL', 'Europe/Amsterdam', { dateStyle: 'short' }),
@@ -105,11 +105,6 @@ function sendDaysMessage(config, days, weekNumber) {
                                 });
                             }
                         }
-                    });
-                    rows.push({
-                        id: 'anders',
-                        title: 'Andere week kiezen',
-                        description: 'Kies deze optie wanneer je een moment wil kiezen in een andere week.',
                     });
                     return [4 /*yield*/, MessageBirdMessages.post('/messages', {
                             type: 'interactive',
@@ -157,18 +152,13 @@ function sendAppointmentMessage(config, appointments, dateResponse) {
                         var title = "".concat((0, Functions_1.dateString)(appointment.start, 'nl-NL', 'Europe/Amsterdam', {
                             timeStyle: 'short',
                         }), " - ").concat((0, Functions_1.dateString)(appointment.end, 'nl-NL', 'Europe/Amsterdam', { timeStyle: 'short' }));
-                        if (rows.length < 9) {
+                        if (rows.length < 10) {
                             rows.push({
                                 id: appointment.start,
                                 title: title,
                                 description: (0, Functions_1.getAppointmentString)(appointment.start, appointment.end),
                             });
                         }
-                    });
-                    rows.push({
-                        id: 'anders',
-                        title: 'Andere dag kiezen',
-                        description: 'Kies deze optie wanneer je een moment wil kiezen op een andere dag.',
                     });
                     return [4 /*yield*/, MessageBirdMessages.post('/messages', {
                             type: 'interactive',
@@ -196,7 +186,8 @@ function sendAppointmentMessage(config, appointments, dateResponse) {
     });
 }
 exports.sendAppointmentMessage = sendAppointmentMessage;
-function sendSuggestionsMessage(config, weeks) {
+function sendSuggestionsMessage(config, weeks, sendMessage) {
+    if (sendMessage === void 0) { sendMessage = true; }
     return __awaiter(this, void 0, void 0, function () {
         var conversationId, apiKey, MessageBirdMessages, slots, suggestionRows, weekRows, i, i, week, i;
         return __generator(this, function (_a) {
@@ -258,6 +249,9 @@ function sendSuggestionsMessage(config, weeks) {
                                 description: slots[i].parsedString,
                             });
                         }
+                    }
+                    if (!sendMessage) {
+                        return [2 /*return*/, slots];
                     }
                     return [4 /*yield*/, MessageBirdMessages.post('/messages', {
                             type: 'interactive',
