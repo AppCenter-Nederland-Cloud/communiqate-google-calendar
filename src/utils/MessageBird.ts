@@ -1,5 +1,5 @@
 import { dateString, getAppointmentString } from './Functions';
-import { Appointment, CalendarDay } from './Calendar';
+import { Appointment, CalendarDay, getSlotsFromWeek } from './Calendar';
 
 const axios = require('axios');
 
@@ -156,4 +156,109 @@ export async function sendAppointmentMessage(
       },
     },
   });
+}
+
+export async function sendSuggestionsMessage(config: MessageBirdConfig, weeks: any[]) {
+  const { conversationId, apiKey } = config;
+
+  const MessageBirdMessages = axios.create({
+    baseURL: `${url}/${conversationId}`,
+    headers: {
+      Authorization: `AccessKey ${apiKey}`,
+    },
+  });
+
+  const slots = getSlotsFromWeek(weeks);
+
+  const suggestionRows: any[] = [];
+  const weekRows: any[] = [];
+
+  if (slots.length === 0) {
+    //send alternative message (nothing available)
+    return false;
+  }
+
+  if (slots.length > 9) {
+    // there are more than 10 slots. So, send 3 suggestions and (max 7) weeks.
+
+    //push the first 3 suggestions
+    for (let i = 0; i < 3; i++) {
+      suggestionRows.push({
+        id: `Voorstel ${i}`,
+        title: `Voorstel ${i + 1}`,
+        description: slots[i].parsedString,
+      });
+    }
+
+    //only 7 weeks may be pushed, if less than 7 are available, push all the weeks.
+    if (weeks.length < 7) {
+      //push all the weeks
+      weeks.forEach((week) => {
+        weekRows.push({
+          id: `week ${week.week}`,
+          title: `week ${week.week}`,
+          description: week.weekString,
+        });
+      });
+    } else {
+      //only push the first 7
+
+      for (let i = 0; i < 7; i++) {
+        const week = weeks[i];
+        weekRows.push({
+          id: `week ${week.week}`,
+          title: `week ${week.week}`,
+          description: week.weekString,
+        });
+      }
+    }
+  } else {
+    //only fill up the suggestions with all slots.
+    for (let i = 0; i < slots.length; i++) {
+      suggestionRows.push({
+        id: `Voorstel ${i}`,
+        title: `Voorstel ${i + 1}`,
+        description: slots[i].parsedString,
+      });
+    }
+  }
+
+  await MessageBirdMessages.post('/messages', {
+    type: 'interactive',
+    content: {
+      interactive: {
+        type: 'list',
+        header: {
+          type: 'text',
+          text: 'Laten we een afspraak plannen!',
+        },
+        body: {
+          text: 'We kunnen een afspraak met je plannen om je huis te verduurzamen. We hebben je alvast wat beschikbare momenten voor je verzameld.',
+        },
+        action: {
+          sections:
+            weekRows.length > 0
+              ? [
+                  {
+                    title: `Voorstellen`,
+                    rows: suggestionRows,
+                  },
+                  {
+                    title: `Ander moment`,
+                    rows: weekRows,
+                  },
+                ]
+              : [
+                  {
+                    title: `Voorstellen`,
+                    rows: suggestionRows,
+                  },
+                ],
+          button: 'Moment kiezen',
+        },
+      },
+    },
+  });
+
+  return slots;
 }

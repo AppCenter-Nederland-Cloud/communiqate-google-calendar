@@ -464,3 +464,21 @@ export async function moveEvent(
 
   return await calendar.updateEvent(eventId, eventData);
 }
+
+export function getSlotsFromWeek(weeks: any[]) {
+  const slots: any[] = [];
+
+  weeks.forEach((week: any) => {
+    week.days.forEach((day: any) => {
+      day.slots.forEach((slot: any) => {
+        slots.push({
+          parsedString: getAppointmentString(slot.start, slot.end, 'nl-NL'),
+          start: slot.start,
+          end: slot.end,
+        });
+      });
+    });
+  });
+
+  return slots;
+}
