@@ -6,4 +6,5 @@ interface MessageBirdConfig {
 export declare function sendErrorMessage(config: MessageBirdConfig, errorMessage: string): Promise<void>;
 export declare function sendDaysMessage(config: MessageBirdConfig, days: CalendarDay[], weekNumber: number): Promise<boolean>;
 export declare function sendAppointmentMessage(config: MessageBirdConfig, appointments: Appointment[], dateResponse: string): Promise<any>;
+export declare function sendSuggestionsMessage(config: MessageBirdConfig, weeks: any[]): Promise<false | any[]>;
 export {};

@@ -36,8 +36,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendAppointmentMessage = exports.sendDaysMessage = exports.sendErrorMessage = void 0;
+exports.sendSuggestionsMessage = exports.sendAppointmentMessage = exports.sendDaysMessage = exports.sendErrorMessage = void 0;
 var Functions_1 = require("./Functions");
+var Calendar_1 = require("./Calendar");
 var axios = require('axios');
 var url = 'https://conversations.messagebird.com/v1/conversations';
 function sendErrorMessage(config, errorMessage) {
@@ -195,3 +196,109 @@ function sendAppointmentMessage(config, appointments, dateResponse) {
     });
 }
 exports.sendAppointmentMessage = sendAppointmentMessage;
+function sendSuggestionsMessage(config, weeks) {
+    return __awaiter(this, void 0, void 0, function () {
+        var conversationId, apiKey, MessageBirdMessages, slots, suggestionRows, weekRows, i, i, week, i;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    conversationId = config.conversationId, apiKey = config.apiKey;
+                    MessageBirdMessages = axios.create({
+                        baseURL: "".concat(url, "/").concat(conversationId),
+                        headers: {
+                            Authorization: "AccessKey ".concat(apiKey),
+                        },
+                    });
+                    slots = (0, Calendar_1.getSlotsFromWeek)(weeks);
+                    suggestionRows = [];
+                    weekRows = [];
+                    if (slots.length === 0) {
+                        //send alternative message (nothing available)
+                        return [2 /*return*/, false];
+                    }
+                    if (slots.length > 9) {
+                        // there are more than 10 slots. So, send 3 suggestions and (max 7) weeks.
+                        //push the first 3 suggestions
+                        for (i = 0; i < 3; i++) {
+                            suggestionRows.push({
+                                id: "Voorstel ".concat(i),
+                                title: "Voorstel ".concat(i + 1),
+                                description: slots[i].parsedString,
+                            });
+                        }
+                        //only 7 weeks may be pushed, if less than 7 are available, push all the weeks.
+                        if (weeks.length < 7) {
+                            //push all the weeks
+                            weeks.forEach(function (week) {
+                                weekRows.push({
+                                    id: "week ".concat(week.week),
+                                    title: "week ".concat(week.week),
+                                    description: week.weekString,
+                                });
+                            });
+                        }
+                        else {
+                            //only push the first 7
+                            for (i = 0; i < 7; i++) {
+                                week = weeks[i];
+                                weekRows.push({
+                                    id: "week ".concat(week.week),
+                                    title: "week ".concat(week.week),
+                                    description: week.weekString,
+                                });
+                            }
+                        }
+                    }
+                    else {
+                        //only fill up the suggestions with all slots.
+                        for (i = 0; i < slots.length; i++) {
+                            suggestionRows.push({
+                                id: "Voorstel ".concat(i),
+                                title: "Voorstel ".concat(i + 1),
+                                description: slots[i].parsedString,
+                            });
+                        }
+                    }
+                    return [4 /*yield*/, MessageBirdMessages.post('/messages', {
+                            type: 'interactive',
+                            content: {
+                                interactive: {
+                                    type: 'list',
+                                    header: {
+                                        type: 'text',
+                                        text: 'Laten we een afspraak plannen!',
+                                    },
+                                    body: {
+                                        text: 'We kunnen een afspraak met je plannen om je huis te verduurzamen. We hebben je alvast wat beschikbare momenten voor je verzameld.',
+                                    },
+                                    action: {
+                                        sections: weekRows.length > 0
+                                            ? [
+                                                {
+                                                    title: "Voorstellen",
+                                                    rows: suggestionRows,
+                                                },
+                                                {
+                                                    title: "Ander moment",
+                                                    rows: weekRows,
+                                                },
+                                            ]
+                                            : [
+                                                {
+                                                    title: "Voorstellen",
+                                                    rows: suggestionRows,
+                                                },
+                                            ],
+                                        button: 'Moment kiezen',
+                                    },
+                                },
+                            },
+                        })];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/, slots];
+            }
+        });
+    });
+}
+exports.sendSuggestionsMessage = sendSuggestionsMessage;

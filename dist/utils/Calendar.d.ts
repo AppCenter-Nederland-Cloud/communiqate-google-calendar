@@ -73,3 +73,4 @@ export declare function cancelEvent(calendarConfig: CalendarConfigProps, eventId
  * Moves the given event to the given dates
  */
 export declare function moveEvent(calendarConfig: CalendarConfigProps, eventId: string, newStartDate: string, newEndDate: string): Promise<any>;
+export declare function getSlotsFromWeek(weeks: any[]): any[];
