@@ -225,7 +225,7 @@ export async function sendSuggestionsMessage(config: MessageBirdConfig, weeks: a
           text: 'Laten we een afspraak plannen!',
         },
         body: {
-          text: 'We kunnen een afspraak met je plannen om je huis te verduurzamen. We hebben je alvast wat beschikbare momenten voor je verzameld.',
+          text: 'We kunnen een afspraak met je plannen. We hebben je alvast wat beschikbare momenten voor je verzameld.',
         },
         action: {
           sections:

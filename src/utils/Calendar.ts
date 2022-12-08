@@ -6,8 +6,10 @@ import Schema$EventDateTime = calendar_v3.Schema$EventDateTime;
 
 import * as dayjs from 'dayjs';
 import * as isoWeek from 'dayjs/plugin/isoWeek';
+import * as isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 
 dayjs.extend(isoWeek);
+dayjs.extend(isSameOrBefore);
 
 export interface CalendarConfigProps {
   GOOGLE_CLIENT_EMAIL: string;
@@ -78,7 +80,7 @@ export async function getAvailableWeeks(
       break;
     }
 
-    //if the calculated week number is greater then 52, set it to the next year, week 1
+    //if the calculated week number is greater than 52, set it to the next year, week 1
 
     const weekEvents = await getWeekEvents(config, weekIndex);
 
@@ -279,60 +281,125 @@ function getAvailableTimeForDay(
       const selectedAppointment = appointmentsToday[i];
       let nextSelected = null;
 
-      //if appointment is first appointment of the day
+      //if first appointment
       if (i === 0) {
         if (timeSlot.start?.dateTime && selectedAppointment.start?.dateTime) {
-          const minutes = getMinutesBetween(timeSlot.start.dateTime, selectedAppointment.start.dateTime);
+          const start = dayjs(timeSlot.start.dateTime).format();
+          const end = dayjs(selectedAppointment.start.dateTime).add(-timeBetweenAppointments, 'minute').format();
+
+          const minutes = getMinutesBetween(start, end);
 
           if (minutes > 0) {
             availableTimeToday.push({
-              startTime: dayjs(timeSlot.start.dateTime).format(),
+              startTime: start, //(beschikbaar start)
               minutesBetween: minutes,
-              endTime: dayjs(selectedAppointment.start.dateTime).add(-timeBetweenAppointments, 'minute').format(),
+              endTime: end, //(1e afspraak eind)
             });
           }
         }
       }
 
-      //if another appointment exists
+      //if another appointment exists (MIDDLE APPOINTMENT)
       if (appointmentsToday.length >= i + 1) {
         nextSelected = appointmentsToday[i + 1];
       }
+
       if (nextSelected) {
         if (nextSelected.start?.dateTime && selectedAppointment.end?.dateTime) {
-          const minutes = getMinutesBetween(selectedAppointment.end.dateTime, nextSelected.start.dateTime);
+          let start = dayjs(selectedAppointment.end.dateTime).format();
+          let end = dayjs(nextSelected.start.dateTime).add(-timeBetweenAppointments, 'minute').format();
+
+          if (timeSlot.start?.dateTime === selectedAppointment.start?.dateTime) {
+            //if the start of the event is at the start of the slot
+            start = dayjs(selectedAppointment.end.dateTime).add(timeBetweenAppointments, 'minute').format();
+            end = dayjs(nextSelected.start.dateTime).add(-timeBetweenAppointments, 'minute').format();
+          }
+
+          const minutes = getMinutesBetween(start, end);
 
           if (minutes > 0) {
             availableTimeToday.push({
-              startTime: dayjs(selectedAppointment.end.dateTime).add(timeBetweenAppointments, 'minute').format(),
-              minutesBetween: minutes - timeBetweenAppointments,
-              endTime: dayjs(nextSelected.start.dateTime).format(),
+              startTime: start,
+              minutesBetween: minutes,
+              endTime: end,
             });
           }
         }
       } else {
-        //if not this is not the first appointment and there is no next appointment, this must be the last appointment
+        //if not this is not the first appointment and there is no next appointment, this must be the last appointment (LAST APPOINTMENT)
         if (selectedAppointment.end?.dateTime && timeSlot.end?.dateTime) {
-          const minutes = getMinutesBetween(selectedAppointment.end.dateTime, timeSlot.end.dateTime);
+          const start = dayjs(selectedAppointment.end.dateTime).add(timeBetweenAppointments, 'minute').format();
+          const end = dayjs(timeSlot.end.dateTime).format();
+
+          const minutes = getMinutesBetween(start, end);
 
           if (minutes > 0) {
             availableTimeToday.push({
-              startTime: dayjs(selectedAppointment.end.dateTime).add(timeBetweenAppointments, 'minute').format(),
+              startTime: start, //(eind afspraak start)
               minutesBetween: minutes,
-              endTime: dayjs(timeSlot.end.dateTime).format(),
+              endTime: end, // (beschikbaar eind) d
             });
           }
         }
       }
+
+      //if appointment is first appointment of the day (START APPOINTMENT)
+      // if (i === 0) {
+      //   if (timeSlot.start?.dateTime && selectedAppointment.start?.dateTime) {
+      //     const minutes = getMinutesBetween(timeSlot.start.dateTime, selectedAppointment.start.dateTime);
+      //
+      //     if (minutes > 0) {
+      //       availableTimeToday.push({
+      //         startTime: dayjs(timeSlot.start.dateTime).format(), //(beschikbaar start)
+      //         minutesBetween: minutes - timeBetweenAppointments,
+      //         endTime: dayjs(selectedAppointment.start.dateTime).add(-timeBetweenAppointments, 'minute').format(), //(1e afspraak eind)
+      //       });
+      //     }
+      //   }
+      // }
+      //
+      // //if another appointment exists (MIDDLE APPOINTMENT)
+      // if (appointmentsToday.length >= i + 1) {
+      //   nextSelected = appointmentsToday[i + 1];
+      // }
+      // if (nextSelected) {
+      //   if (nextSelected.start?.dateTime && selectedAppointment.end?.dateTime) {
+      //     const minutes = getMinutesBetween(selectedAppointment.end.dateTime, nextSelected.start.dateTime);
+      //
+      //     if (minutes > 0) {
+      //       availableTimeToday.push({
+      //         startTime: dayjs(selectedAppointment.end.dateTime).format(),
+      //         minutesBetween: minutes - timeBetweenAppointments,
+      //         endTime: dayjs(nextSelected.start.dateTime).add(-timeBetweenAppointments, 'minute').format(),
+      //       });
+      //     }
+      //   }
+      // } else {
+      //   //if not this is not the first appointment and there is no next appointment, this must be the last appointment (LAST APPOINTMENT)
+      //   if (selectedAppointment.end?.dateTime && timeSlot.end?.dateTime) {
+      //     const minutes = getMinutesBetween(selectedAppointment.end.dateTime, timeSlot.end.dateTime);
+      //
+      //     if (minutes > 0) {
+      //       availableTimeToday.push({
+      //         startTime: dayjs(selectedAppointment.end.dateTime).add(timeBetweenAppointments, 'minute').format(), //(eind afspraak start)
+      //         minutesBetween: minutes - timeBetweenAppointments,
+      //         endTime: dayjs(timeSlot.end.dateTime).format(), // (beschikbaar eind)
+      //       });
+      //     }
+      //   }
+      // }
     }
   } else {
     if (timeSlot.start?.dateTime && timeSlot.end?.dateTime) {
-      const minutes = getMinutesBetween(timeSlot.start.dateTime, timeSlot.end.dateTime);
+      const start = dayjs(timeSlot.start.dateTime).format();
+      const end = dayjs(timeSlot.end.dateTime).format();
+
+      const minutes = getMinutesBetween(start, end);
 
       availableTimeToday.push({
-        startTime: timeSlot.start.dateTime,
+        startTime: start,
         getMinutesBetween: minutes,
-        endTime: timeSlot.end.dateTime,
+        endTime: end,
       });
     }
   }
@@ -354,11 +421,13 @@ function getAvailableSlotsForDay(
   const availableTimeToday = getAvailableTimeForDay(appointmentsToday, timeSlot, timeBetweenAppointments);
 
   availableTimeToday.forEach((availableTime) => {
+    //for each timeslot that is available, check if that timeslot has appointmentDuration between.
+
     let newAppointmentStartTime = dayjs(availableTime.startTime);
     let newAppointmentEndTime = dayjs(availableTime.startTime).add(appointmentDuration, 'minute');
 
-    while (newAppointmentStartTime.isBefore(availableTime.endTime)) {
-      if (newAppointmentEndTime.isBefore(availableTime.endTime)) {
+    while (newAppointmentStartTime.isSameOrBefore(availableTime.endTime)) {
+      if (newAppointmentEndTime.isSameOrBefore(availableTime.endTime)) {
         availableSlotsToday.push({
           start: newAppointmentStartTime.format(),
           end: newAppointmentEndTime.format(),
@@ -372,6 +441,8 @@ function getAvailableSlotsForDay(
       newAppointmentEndTime = dayjs(newAppointmentEndTime).add(appointmentDuration + timeBetweenAppointments, 'minute');
     }
   });
+
+  //console.log('slots', availableSlotsToday);
 
   return availableSlotsToday;
 }
