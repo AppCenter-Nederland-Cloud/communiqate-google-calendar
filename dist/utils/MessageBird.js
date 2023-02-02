@@ -263,7 +263,7 @@ function sendSuggestionsMessage(config, weeks, sendMessage) {
                                         text: 'Laten we een afspraak plannen!',
                                     },
                                     body: {
-                                        text: 'We kunnen een afspraak met je plannen. Druk op "Moment kiezen" om een geschikt moment voor je afspraak te kiezen.',
+                                        text: 'Ik kan een afspraak met je plannen. Druk op "Moment kiezen" om een geschikt moment voor je afspraak te kiezen.',
                                     },
                                     action: {
                                         sections: weekRows.length > 0
