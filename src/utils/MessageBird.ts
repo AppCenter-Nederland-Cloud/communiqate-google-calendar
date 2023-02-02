@@ -232,17 +232,17 @@ export async function sendSuggestionsMessage(config: MessageBirdConfig, weeks: a
             weekRows.length > 0
               ? [
                   {
-                    title: `Voorstellen`,
+                    title: 'Voorstellen',
                     rows: suggestionRows,
                   },
                   {
-                    title: `Ander moment`,
+                    title: 'Ander moment',
                     rows: weekRows,
                   },
                 ]
               : [
                   {
-                    title: `Voorstellen`,
+                    title: 'Voorstellen',
                     rows: suggestionRows,
                   },
                 ],

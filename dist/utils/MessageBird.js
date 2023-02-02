@@ -269,17 +269,17 @@ function sendSuggestionsMessage(config, weeks, sendMessage) {
                                         sections: weekRows.length > 0
                                             ? [
                                                 {
-                                                    title: "Voorstellen",
+                                                    title: 'Voorstellen',
                                                     rows: suggestionRows,
                                                 },
                                                 {
-                                                    title: "Ander moment",
+                                                    title: 'Ander moment',
                                                     rows: weekRows,
                                                 },
                                             ]
                                             : [
                                                 {
-                                                    title: "Voorstellen",
+                                                    title: 'Voorstellen',
                                                     rows: suggestionRows,
                                                 },
                                             ],
